@@ -74,8 +74,8 @@ def parse_requirements(fname='requirements.txt', with_version=True): # 解析req
     return packages
 
 def getVersion(): # 获取版本号
-    with open('FLite/version.py', 'r') as f:
-        exec(compile(f.read(), 'FLite/version.py', 'exec'))
+    with open('FLite/version/version.py', 'r') as f:
+        exec(compile(f.read(), 'FLite/version/version.py', 'exec'))
     return locals()['__version__']
 
 def getReadme(): # 获取README.md文件
