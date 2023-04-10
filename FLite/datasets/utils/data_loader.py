@@ -115,10 +115,10 @@ def load_data(root,
                                              data_amount, iid_fraction, user_str, train_test_split, alpha,
                                              quantity_weights)
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    dataset_file = os.path.join(dir_path, "data_process", "{}.py".format(dataset_name))
+    dataset_file = os.path.join(dir_path, "data_processor", "{}.py".format(dataset_name))
     if not os.path.exists(dataset_file):
         logger.error("Please specify a valid process file path for process_x and process_y functions.")
-    dataset_path = "FLite.datasets.data_process.{}".format(dataset_name)
+    dataset_path = "FLite.datasets.data_processor.{}".format(dataset_name)
     dataset_lib = importlib.import_module(dataset_path)
     process_x = getattr(dataset_lib, "process_x", None)
     process_y = getattr(dataset_lib, "process_y", None)
