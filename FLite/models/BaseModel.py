@@ -1,5 +1,9 @@
 import importlib
 from torch import nn
+from os import path
+import logging
+
+logger = logging.getLogger(__name__)
 
 class BaseModel(nn.Module):
     def __init__(self):
@@ -8,7 +12,10 @@ class BaseModel(nn.Module):
 
 def initModel(model_name : str):
 
-    # TODO: logger
+    dir_path = path.dirname(path.realpath(__file__))
+    model_file = path.join(dir_path, "{}.py".format(model_name))
+    if not path.exists(model_file):
+        logger.error("Please specify a valid model.")
 
     model_path = "FLite.models.{}".format(model_name)
     model_lib = importlib.import_module(model_path)
