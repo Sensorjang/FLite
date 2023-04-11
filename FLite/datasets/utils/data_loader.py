@@ -127,6 +127,8 @@ def load_data(
         quantity_weights,
     )
     dir_path = os.path.dirname(os.path.realpath(__file__))
+    # dir_path 删除最后的一个"/xxx"子路径
+    dir_path = os.path.dirname(dir_path)
     dataset_file = os.path.join(
         dir_path, "data_processor", "{}.py".format(dataset_name)
     )
