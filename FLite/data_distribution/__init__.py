@@ -1,4 +1,4 @@
-# 将暴露到外部的函数和类
+# 暴露到外部的函数和类
 from FLite.data_distribution.distributed import (
     dist_init,
     get_device,
