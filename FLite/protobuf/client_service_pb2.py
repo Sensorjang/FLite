@@ -30,29 +30,29 @@ _OPTIMIZER = DESCRIPTOR.message_types_by_name['Optimizer']
 _OPERATERESPONSE = DESCRIPTOR.message_types_by_name['OperateResponse']
 OperateRequest = _reflection.GeneratedProtocolMessageType('OperateRequest', (_message.Message,), {
   'DESCRIPTOR' : _OPERATEREQUEST,
-  '__module__' : 'easyfl.pb.client_service_pb2'
-  # @@protoc_insertion_point(class_scope:easyfl.pb.OperateRequest)
+  '__module__' : 'FLite.protobuf.client_service_pb2'
+  # @@protoc_insertion_point(class_scope:FLite.protobuf.OperateRequest)
   })
 _sym_db.RegisterMessage(OperateRequest)
 
 OperateConfig = _reflection.GeneratedProtocolMessageType('OperateConfig', (_message.Message,), {
   'DESCRIPTOR' : _OPERATECONFIG,
-  '__module__' : 'easyfl.pb.client_service_pb2'
-  # @@protoc_insertion_point(class_scope:easyfl.pb.OperateConfig)
+  '__module__' : 'FLite.protobuf.client_service_pb2'
+  # @@protoc_insertion_point(class_scope:FLite.protobuf.OperateConfig)
   })
 _sym_db.RegisterMessage(OperateConfig)
 
 Optimizer = _reflection.GeneratedProtocolMessageType('Optimizer', (_message.Message,), {
   'DESCRIPTOR' : _OPTIMIZER,
-  '__module__' : 'easyfl.pb.client_service_pb2'
-  # @@protoc_insertion_point(class_scope:easyfl.pb.Optimizer)
+  '__module__' : 'FLite.protobuf.client_service_pb2'
+  # @@protoc_insertion_point(class_scope:FLite.protobuf.Optimizer)
   })
 _sym_db.RegisterMessage(Optimizer)
 
 OperateResponse = _reflection.GeneratedProtocolMessageType('OperateResponse', (_message.Message,), {
   'DESCRIPTOR' : _OPERATERESPONSE,
-  '__module__' : 'easyfl.pb.client_service_pb2'
-  # @@protoc_insertion_point(class_scope:easyfl.pb.OperateResponse)
+  '__module__' : 'FLite.protobuf.client_service_pb2'
+  # @@protoc_insertion_point(class_scope:FLite.protobuf.OperateResponse)
   })
 _sym_db.RegisterMessage(OperateResponse)
 
