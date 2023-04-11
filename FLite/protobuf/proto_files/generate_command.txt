@@ -1,0 +1,8 @@
+# PS ~\FLite\FLite\protobuf> pip install protobuf
+# PS ~\FLite\FLite\protobuf> pip install grpcio
+# PS ~\FLite\FLite\protobuf> pip install grpcio-tools
+#
+# PS ~\FLite\FLite\protobuf> python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\common.proto
+# PS ~\FLite\FLite\protobuf> python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\client_service.proto
+# PS ~\FLite\FLite\protobuf> python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\server_service.proto
+# PS ~\FLite\FLite\protobuf> python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. .\tracking_service.proto
