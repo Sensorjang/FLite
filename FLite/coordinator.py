@@ -15,6 +15,7 @@ from FLite.datasets.utils.data_loader import construct_datasets
 from FLite.data_distribution import dist_init, get_device
 from FLite.models.BaseModel import initModel as load_model
 from FLite.server.BaseServer import BaseServer
+from FLite.heterogeneous_simulation.system_hetero import resource_hetero_simulation
 
 """Coordinator manages federated learning server and client.
 A single instance of coordinator is initialized for each federated learning task
@@ -150,7 +151,14 @@ class Coordinator(object):
             self._client_class = BaseClient
 
         # Enforce system heterogeneity of clients.
-        sleep_time = 0
+        sleep_time = [0 for _ in self.train_data.users]
+        if self.conf.resource_heterogeneous.simulate:
+            sleep_time = resource_hetero_simulation(self.conf.resource_heterogeneous.fraction,
+                                                    self.conf.resource_heterogeneous.hetero_type,
+                                                    self.conf.resource_heterogeneous.sleep_group_num,
+                                                    self.conf.resource_heterogeneous.level,
+                                                    self.conf.resource_heterogeneous.total_time,
+                                                    len(self.train_data.users))
 
         client_test_data = self.test_data
         if self.conf.test_mode == TEST_IN_SERVER:
