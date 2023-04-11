@@ -28,6 +28,4 @@ from FLite.datasets.cifar100 import Cifar100
 
 
 
-__all__ = ['FederatedDataset', 'FederatedImageDataset', 'FederatedTensorDataset', 'FederatedTorchDataset',
-           'construct_datasets', 'data_simulation', 'iid', 'non_iid_dirichlet', 'non_iid_class',
-           'equal_division', 'quantity_hetero', 'BaseDataset', 'Femnist', 'Shakespeare', 'Cifar10', 'Cifar100']
+__all__ = ['FederatedDataset', 'FederatedImageDataset', 'FederatedTensorDataset', 'FederatedTorchDataset','construct_datasets', 'data_simulation', 'iid', 'non_iid_dirichlet', 'non_iid_class','equal_division', 'quantity_hetero', 'BaseDataset', 'Femnist', 'Shakespeare', 'Cifar10', 'Cifar100']
