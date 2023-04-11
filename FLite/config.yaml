@@ -105,6 +105,9 @@ tracking:  # logging and tracking配置
 resource_heterogeneous:
   simulate: False  # 是否模拟联合学习中的系统异构性。
   #要模拟的异构类型，支持：iso等同异构、dir直接异构、real真实异构。
+    # iso: 选定客户端具有等长睡眠时间分布
+    # dir: 使用对称狄利克雷过程对睡眠时间异质性进行采样，以模拟直接异质性
+    # real: 模拟真实的异构性，即客户端的计算能力不同。使用主流智能手机的真实速度比来模拟睡眠时间的异构性
   hetero_type: "real"
   level: 3  # 异构级别（0-5），0表示客户端之间没有异构。
   sleep_group_num: 1000  # 具有不同睡眠时间的组的数量。1表示所有客户端都相同。
