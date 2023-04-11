@@ -39,21 +39,23 @@ class BaseDataset(object):
         seed: Random seed.
     """
 
-    def __init__(self,
-                 root,
-                 dataset_name,
-                 fraction,
-                 split_type,
-                 user,
-                 iid_user_fraction,
-                 train_test_split,
-                 minsample,
-                 num_class,
-                 num_of_client,
-                 class_per_client,
-                 setting_folder,
-                 seed=-1,
-                 **kwargs):
+    def __init__(
+        self,
+        root,
+        dataset_name,
+        fraction,
+        split_type,
+        user,
+        iid_user_fraction,
+        train_test_split,
+        minsample,
+        num_class,
+        num_of_client,
+        class_per_client,
+        setting_folder,
+        seed=-1,
+        **kwargs
+    ):
         # file_path = os.path.dirname(os.path.realpath(__file__))
         # self.base_folder = os.path.join(os.path.dirname(file_path), "data", dataset_name)
         self.base_folder = root
@@ -80,7 +82,9 @@ class BaseDataset(object):
 
     @abstractmethod
     def download_packaged_dataset_and_extract(self, filename):
-        raise NotImplementedError("download_packaged_dataset_and_extract not implemented")
+        raise NotImplementedError(
+            "download_packaged_dataset_and_extract not implemented"
+        )
 
     @abstractmethod
     def download_raw_file_and_extract(self):
@@ -95,14 +99,41 @@ class BaseDataset(object):
         raise NotImplementedError("convert_data_to_json not implemented")
 
     @staticmethod
-    def get_setting_folder(dataset, split_type, num_of_client, min_size, class_per_client,
-                           fraction, iid_fraction, user_str, train_test_split, alpha=None, weights=None):
+    def get_setting_folder(
+        dataset,
+        split_type,
+        num_of_client,
+        min_size,
+        class_per_client,
+        fraction,
+        iid_fraction,
+        user_str,
+        train_test_split,
+        alpha=None,
+        weights=None,
+    ):
         if dataset == CIFAR10 or dataset == CIFAR100:
-            return "{}_{}_{}_{}_{}_{}_{}".format(dataset, split_type, num_of_client, min_size, class_per_client, alpha,
-                                                 1 if weights else 0)
+            return "{}_{}_{}_{}_{}_{}_{}".format(
+                dataset,
+                split_type,
+                num_of_client,
+                min_size,
+                class_per_client,
+                alpha,
+                1 if weights else 0,
+            )
         else:
-            return "{}_{}_{}_{}_{}_{}_{}_{}_{}".format(dataset, split_type, num_of_client, min_size, class_per_client,
-                                                       fraction, iid_fraction, user_str, train_test_split)
+            return "{}_{}_{}_{}_{}_{}_{}_{}_{}".format(
+                dataset,
+                split_type,
+                num_of_client,
+                min_size,
+                class_per_client,
+                fraction,
+                iid_fraction,
+                user_str,
+                train_test_split,
+            )
 
     def setup(self):
         self.download_raw_file_and_extract()
@@ -117,7 +148,15 @@ class BaseDataset(object):
         if not os.path.exists(sample_folder):
             os.makedirs(sample_folder)
         if not os.listdir(sample_folder):
-            sample(self.base_folder, self.data_folder, meta_folder, self.fraction, self.iid, self.iid_user_fraction, self.seed)
+            sample(
+                self.base_folder,
+                self.data_folder,
+                meta_folder,
+                self.fraction,
+                self.iid,
+                self.iid_user_fraction,
+                self.seed,
+            )
 
     def sample_extreme(self):
         meta_folder = os.path.join(self.base_folder, "meta")
@@ -127,7 +166,16 @@ class BaseDataset(object):
         if not os.path.exists(sample_folder):
             os.makedirs(sample_folder)
         if not os.listdir(sample_folder):
-            extreme(self.base_folder, self.data_folder, meta_folder, self.fraction, self.num_class, self.num_of_client, self.class_per_client, self.seed)
+            extreme(
+                self.base_folder,
+                self.data_folder,
+                meta_folder,
+                self.fraction,
+                self.num_class,
+                self.num_of_client,
+                self.class_per_client,
+                self.seed,
+            )
 
     def remove_unqualified_user(self):
         rm_folder = os.path.join(self.data_folder, "rem_user_data")
@@ -145,7 +193,14 @@ class BaseDataset(object):
         if not os.path.exists(test):
             os.makedirs(test)
         if not os.listdir(train) and not os.listdir(test):
-            split_train_test(self.data_folder, meta_folder, self.dataset_name, self.user, self.train_test_split, self.seed)
+            split_train_test(
+                self.data_folder,
+                meta_folder,
+                self.dataset_name,
+                self.user,
+                self.train_test_split,
+                self.seed,
+            )
 
     def sampling(self):
         if self.split_type == "iid":

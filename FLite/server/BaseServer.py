@@ -13,8 +13,15 @@ from omegaconf import OmegaConf
 
 from FLite.communication.grpc import grpc_wrapper
 from FLite.datasets import TEST_IN_SERVER
-from FLite.data_distribution import grouping, reduce_models, reduce_models_only_params, \
-    reduce_value, reduce_values, reduce_weighted_values, gather_value
+from FLite.data_distribution import (
+    grouping,
+    reduce_models,
+    reduce_models_only_params,
+    reduce_value,
+    reduce_values,
+    reduce_weighted_values,
+    gather_value,
+)
 from FLite.data_distribution.distributed import CPU, GREEDY_GROUPING
 from FLite.protobuf import client_service_pb2 as client_pb
 from FLite.protobuf import common_pb2 as common_pb
@@ -48,19 +55,22 @@ def create_argument_parser():
     Returns:
         argparse.ArgumentParser: The parser with server service arguments.
     """
-    parser = argparse.ArgumentParser(description='Federated Server')
-    parser.add_argument('--local-port',
-                        type=int,
-                        default=22999,
-                        help='Listen port of the client')
-    parser.add_argument('--tracker-addr',
-                        type=str,
-                        default="localhost:12666",
-                        help='Address of tracking service in [IP]:[PORT] format')
-    parser.add_argument('--is-remote',
-                        type=bool,
-                        default=False,
-                        help='Whether start as a remote server.')
+    parser = argparse.ArgumentParser(description="Federated Server")
+    parser.add_argument(
+        "--local-port", type=int, default=22999, help="Listen port of the client"
+    )
+    parser.add_argument(
+        "--tracker-addr",
+        type=str,
+        default="localhost:12666",
+        help="Address of tracking service in [IP]:[PORT] format",
+    )
+    parser.add_argument(
+        "--is-remote",
+        type=bool,
+        default=False,
+        help="Whether start as a remote server.",
+    )
 
     return parser
 
@@ -89,12 +99,9 @@ class BaseServer(object):
         >>>         pass
     """
 
-    def __init__(self,
-                 conf,
-                 test_data=None,
-                 val_data=None,
-                 is_remote=False,
-                 local_port=22999):
+    def __init__(
+        self, conf, test_data=None, val_data=None, is_remote=False, local_port=22999
+    ):
         self.conf = conf
         self.test_data = test_data
         self.val_data = val_data
@@ -144,7 +151,9 @@ class BaseServer(object):
         self.set_clients(clients)
 
         if self._should_track():
-            self._tracker.create_task(self.conf.task_id, OmegaConf.to_container(self.conf))
+            self._tracker.create_task(
+                self.conf.task_id, OmegaConf.to_container(self.conf)
+            )
 
         # Get initial testing accuracies
         if self.conf.server.test_all:
@@ -165,7 +174,11 @@ class BaseServer(object):
             self.post_train()
 
             # Test
-            if self._do_every(self.conf.server.test_every, self._current_round, self.conf.server.rounds):
+            if self._do_every(
+                self.conf.server.test_every,
+                self._current_round,
+                self.conf.server.rounds,
+            ):
                 self.pre_test()
                 self.test()
                 self.post_test()
@@ -177,7 +190,9 @@ class BaseServer(object):
             self.save_tracker()
 
         self.print_("Accuracies: {}".format(rounding(self._accuracies, 4)))
-        self.print_("Cumulative training time: {}".format(rounding(self._cumulative_times, 2)))
+        self.print_(
+            "Cumulative training time: {}".format(rounding(self._cumulative_times, 2))
+        )
 
     def stop(self):
         """Set the flag to indicate training should stop."""
@@ -218,7 +233,11 @@ class BaseServer(object):
 
         test_begin_time = time.time()
 
-        test_results = {metric.TEST_ACCURACY: 0, metric.TEST_LOSS: 0, metric.TEST_TIME: 0}
+        test_results = {
+            metric.TEST_ACCURACY: 0,
+            metric.TEST_LOSS: 0,
+            metric.TEST_TIME: 0,
+        }
         if self.conf.test_mode == TEST_IN_SERVER:
             if self.is_primary_server():
                 test_results = self.test_in_server(self.conf.device)
@@ -240,7 +259,10 @@ class BaseServer(object):
         Returns:
             bool: A flag to indicate whether should stop training.
         """
-        if self._should_stop or (self.conf.server.rounds and self._current_round + 1 >= self.conf.server.rounds):
+        if self._should_stop or (
+            self.conf.server.rounds
+            and self._current_round + 1 >= self.conf.server.rounds
+        ):
             self._is_training = False
             return True
         return False
@@ -272,7 +294,9 @@ class BaseServer(object):
         correct = 0
         loss_fn = torch.nn.CrossEntropyLoss().to(device)
         with torch.no_grad():
-            for batched_x, batched_y in self.test_data.loader(self.conf.server.batch_size, seed=self.conf.seed):
+            for batched_x, batched_y in self.test_data.loader(
+                self.conf.server.batch_size, seed=self.conf.seed
+            ):
                 x = batched_x.to(device)
                 y = batched_y.to(device)
                 log_probs = self._model(x)
@@ -286,7 +310,7 @@ class BaseServer(object):
 
             test_results = {
                 metric.TEST_ACCURACY: float(accuracy),
-                metric.TEST_LOSS: float(test_loss)
+                metric.TEST_LOSS: float(test_loss),
             }
             return test_results
 
@@ -302,12 +326,16 @@ class BaseServer(object):
             (list[:obj:`BaseClient`]|list[str]): The selected clients.
         """
         if clients_per_round > len(clients):
-            logger.warning("Available clients for selection are smaller than required clients for each round")
+            logger.warning(
+                "Available clients for selection are smaller than required clients for each round"
+            )
 
         clients_per_round = min(clients_per_round, len(clients))
         if self.conf.server.random_selection:
             np.random.seed(self._current_round)
-            self.selected_clients = np.random.choice(clients, clients_per_round, replace=False)
+            self.selected_clients = np.random.choice(
+                clients, clients_per_round, replace=False
+            )
         else:
             self.selected_clients = clients[:clients_per_round]
 
@@ -321,19 +349,29 @@ class BaseServer(object):
         In distributed, selected clients are grouped with different strategies: greedy and random.
         """
         if self.conf.is_distributed:
-            groups = grouping(self.selected_clients,
-                              self.conf.distributed.world_size,
-                              self.default_time,
-                              self.conf.resource_heterogeneous.grouping_strategy,
-                              self._current_round)
+            groups = grouping(
+                self.selected_clients,
+                self.conf.distributed.world_size,
+                self.default_time,
+                self.conf.resource_heterogeneous.grouping_strategy,
+                self._current_round,
+            )
             # assign a group for each rank to train with current device.
             self.grouped_clients = groups[self.conf.distributed.rank]
             grouping_info = [(c.cid, c.round_time) for c in self.grouped_clients]
-            logger.info("Grouping Result for rank {}: {}".format(self.conf.distributed.rank, grouping_info))
+            logger.info(
+                "Grouping Result for rank {}: {}".format(
+                    self.conf.distributed.rank, grouping_info
+                )
+            )
         else:
             self.grouped_clients = self.selected_clients
 
-        rank = 0 if len(self.grouped_clients) == len(self.selected_clients) else self.conf.distributed.rank
+        rank = (
+            0
+            if len(self.grouped_clients) == len(self.selected_clients)
+            else self.conf.distributed.rank
+        )
 
     def compression(self):
         """Model compression to reduce communication cost."""
@@ -347,7 +385,11 @@ class BaseServer(object):
             self.distribution_to_train_locally()
 
             # Adaptively update the training time of clients for greedy grouping.
-            if self.conf.is_distributed and self.conf.resource_heterogeneous.grouping_strategy == GREEDY_GROUPING:
+            if (
+                self.conf.is_distributed
+                and self.conf.resource_heterogeneous.grouping_strategy
+                == GREEDY_GROUPING
+            ):
                 self.profile_training_speed()
                 self.update_default_time()
 
@@ -361,15 +403,21 @@ class BaseServer(object):
             self.conf.client.task_id = self.conf.task_id
             self.conf.client.round_id = self._current_round
 
-            uploaded_request = client.run_train(self._compressed_model, self.conf.client)
+            uploaded_request = client.run_train(
+                self._compressed_model, self.conf.client
+            )
             uploaded_content = uploaded_request.content
 
             model = self.decompression(codec.unmarshal(uploaded_content.data))
             uploaded_models[client.cid] = model
             uploaded_weights[client.cid] = uploaded_content.data_size
-            uploaded_metrics.append(metric.ClientMetric.from_proto(uploaded_content.metric))
+            uploaded_metrics.append(
+                metric.ClientMetric.from_proto(uploaded_content.metric)
+            )
 
-        self.set_client_uploads_train(uploaded_models, uploaded_weights, uploaded_metrics)
+        self.set_client_uploads_train(
+            uploaded_models, uploaded_weights, uploaded_metrics
+        )
 
     def distribution_to_train_remotely(self):
         """Distribute training requests to remote clients through multiple threads.
@@ -437,9 +485,13 @@ class BaseServer(object):
             uploaded_accuracies.append(performance.accuracy)
             uploaded_losses.append(performance.loss)
             uploaded_data_sizes.append(uploaded_content.data_size)
-            uploaded_metrics.append(metric.ClientMetric.from_proto(uploaded_content.metric))
+            uploaded_metrics.append(
+                metric.ClientMetric.from_proto(uploaded_content.metric)
+            )
 
-        self.set_client_uploads_test(uploaded_accuracies, uploaded_losses, uploaded_data_sizes, uploaded_metrics)
+        self.set_client_uploads_test(
+            uploaded_accuracies, uploaded_losses, uploaded_data_sizes, uploaded_metrics
+        )
 
     def distribution_to_test_remotely(self):
         """Distribute testing requests to remote clients through multiple threads.
@@ -465,7 +517,7 @@ class BaseServer(object):
                         task_id=self.conf.task_id,
                         round_id=self._current_round,
                         track=should_track,
-                    )
+                    ),
                 )
                 executor.submit(self._distribution_remotely, client.client_id, request)
 
@@ -484,16 +536,22 @@ class BaseServer(object):
         if self.conf.server.test_all:
             if self.conf.is_distributed:
                 # Group and assign clients to different hardware devices to test.
-                test_clients = grouping(self._clients,
-                                        self.conf.distributed.world_size,
-                                        default_time=self.default_time,
-                                        strategy=self.conf.resource_heterogeneous.grouping_strategy)
+                test_clients = grouping(
+                    self._clients,
+                    self.conf.distributed.world_size,
+                    default_time=self.default_time,
+                    strategy=self.conf.resource_heterogeneous.grouping_strategy,
+                )
                 test_clients = test_clients[self.conf.distributed.rank]
             else:
                 test_clients = self._clients
         else:
             # For the initial testing, if no clients are selected, test all clients
-            test_clients = self.grouped_clients if self.grouped_clients is not None else self._clients
+            test_clients = (
+                self.grouped_clients
+                if self.grouped_clients is not None
+                else self._clients
+            )
         return test_clients
 
     def _distribution_remotely(self, cid, request):
@@ -505,9 +563,15 @@ class BaseServer(object):
         """
         resp = self.client_stubs[cid].Operate(request)
         if resp.status.code != common_pb.SC_OK:
-            logger.error("Failed to train/test in client {}, error: {}".format(cid, resp.status.message))
+            logger.error(
+                "Failed to train/test in client {}, error: {}".format(
+                    cid, resp.status.message
+                )
+            )
         else:
-            logger.info("Distribute to train/test remotely successfully, client: {}".format(cid))
+            logger.info(
+                "Distribute to train/test remotely successfully, client: {}".format(cid)
+            )
 
     def aggregation_test(self):
         """Aggregate testing results from clients.
@@ -526,11 +590,13 @@ class BaseServer(object):
             loss = self._weighted_value(losses, test_sizes)
             accuracy = self._weighted_value(accuracies, test_sizes)
         else:
-            raise ValueError("test_method not supported, please use average or weighted")
+            raise ValueError(
+                "test_method not supported, please use average or weighted"
+            )
 
         test_results = {
             metric.TEST_ACCURACY: float(accuracy),
-            metric.TEST_LOSS: float(loss)
+            metric.TEST_LOSS: float(loss),
         }
         return test_results
 
@@ -623,14 +689,24 @@ class BaseServer(object):
 
     def save_model(self):
         """Save the model in the server."""
-        if self._do_every(self.conf.server.save_model_every, self._current_round, self.conf.server.rounds) and \
-                self.is_primary_server():
+        if (
+            self._do_every(
+                self.conf.server.save_model_every,
+                self._current_round,
+                self.conf.server.rounds,
+            )
+            and self.is_primary_server()
+        ):
             save_path = self.conf.server.save_model_path
             if save_path == "":
                 save_path = os.path.join(os.getcwd(), "saved_models")
             os.makedirs(save_path, exist_ok=True)
-            save_path = os.path.join(save_path,
-                                     "{}_global_model_r_{}.pth".format(self.conf.task_id, self._current_round))
+            save_path = os.path.join(
+                save_path,
+                "{}_global_model_r_{}.pth".format(
+                    self.conf.task_id, self._current_round
+                ),
+            )
             torch.save(self._model.cpu().state_dict(), save_path)
             self.print_("Model saved at {}".format(save_path))
 
@@ -662,7 +738,9 @@ class BaseServer(object):
         self.set_client_uploads(DATA_SIZE, test_sizes)
         if self._should_gather_metrics() and CLIENT_METRICS in self._client_uploads:
             train_metrics = self.get_client_uploads()[CLIENT_METRICS]
-            metrics = metric.ClientMetric.merge_train_to_test_metrics(train_metrics, metrics)
+            metrics = metric.ClientMetric.merge_train_to_test_metrics(
+                train_metrics, metrics
+            )
         self.set_client_uploads(CLIENT_METRICS, metrics)
 
     def set_client_uploads(self, key, value):
@@ -709,15 +787,21 @@ class BaseServer(object):
     def start_service(self):
         """Start federated learning server GRPC service."""
         if self.is_remote:
-            grpc_wrapper.start_service(grpc_wrapper.TYPE_SERVER, ServerService(self), self.local_port)
+            grpc_wrapper.start_service(
+                grpc_wrapper.TYPE_SERVER, ServerService(self), self.local_port
+            )
             logger.info("GRPC server started at :{}".format(self.local_port))
 
     def connect_remote_clients(self, clients):
         # TODO: This client should be consistent with client started separately.
         for client in clients:
             if client.client_id not in self.client_stubs:
-                self.client_stubs[client.client_id] = grpc_wrapper.init_stub(grpc_wrapper.TYPE_CLIENT, client.address)
-                logger.info("Successfully connected to gRPC client {}".format(client.address))
+                self.client_stubs[client.client_id] = grpc_wrapper.init_stub(
+                    grpc_wrapper.TYPE_CLIENT, client.address
+                )
+                logger.info(
+                    "Successfully connected to gRPC client {}".format(client.address)
+                )
 
     def init_etcd(self, addresses):
         """Initialize etcd as the registry for client registration.
@@ -743,7 +827,9 @@ class BaseServer(object):
     def init_tracker(self):
         """Initialize tracking"""
         if self.conf.server.track:
-            self._tracker = init_tracking(self.conf.tracking.database, self.conf.tracker_addr)
+            self._tracker = init_tracking(
+                self.conf.tracking.database, self.conf.tracker_addr
+            )
 
     def track(self, metric_name, value):
         """Track a metric.
@@ -768,8 +854,13 @@ class BaseServer(object):
         for metric_name in results:
             self.track(metric_name, results[metric_name])
 
-        self.print_('Test time {:.2f}s, Test loss: {:.2f}, Test accuracy: {:.2f}%'.format(
-            results[metric.TEST_TIME], results[metric.TEST_LOSS], results[metric.TEST_ACCURACY]))
+        self.print_(
+            "Test time {:.2f}s, Test loss: {:.2f}, Test accuracy: {:.2f}%".format(
+                results[metric.TEST_TIME],
+                results[metric.TEST_LOSS],
+                results[metric.TEST_ACCURACY],
+            )
+        )
 
     def save_tracker(self):
         """Save metrics in the tracker to database."""
@@ -789,16 +880,23 @@ class BaseServer(object):
         test_upload_size = 0
         test_download_size = 0
         for client_metric in self._client_uploads[CLIENT_METRICS]:
-            if client_metric.round_id == self._current_round and client_metric.task_id == self.conf.task_id:
+            if (
+                client_metric.round_id == self._current_round
+                and client_metric.task_id == self.conf.task_id
+            ):
                 train_upload_size += client_metric.train_upload_size
                 train_download_size += client_metric.train_download_size
                 test_upload_size += client_metric.test_upload_size
                 test_download_size += client_metric.test_download_size
         if self.conf.is_distributed:
             train_upload_size = reduce_value(train_upload_size, self.conf.device).item()
-            train_download_size = reduce_value(train_download_size, self.conf.device).item()
+            train_download_size = reduce_value(
+                train_download_size, self.conf.device
+            ).item()
             test_upload_size = reduce_value(test_upload_size, self.conf.device).item()
-            test_download_size = reduce_value(test_download_size, self.conf.device).item()
+            test_download_size = reduce_value(
+                test_download_size, self.conf.device
+            ).item()
         self._tracker.track_round(metric.TRAIN_UPLOAD_SIZE, train_upload_size)
         self._tracker.track_round(metric.TRAIN_DOWNLOAD_SIZE, train_download_size)
         self._tracker.track_round(metric.TEST_UPLOAD_SIZE, test_upload_size)
@@ -848,9 +946,15 @@ class BaseServer(object):
             train_accuracy_list += gather_value(m.train_accuracy, world_size, device)
             train_loss_list += gather_value(m.train_loss, world_size, device)
             train_time_list += gather_value(m.train_time, world_size, device)
-            train_upload_time_list += gather_value(m.train_upload_time, world_size, device)
-            train_upload_size_list += gather_value(m.train_upload_size, world_size, device)
-            train_download_size_list += gather_value(m.train_download_size, world_size, device)
+            train_upload_time_list += gather_value(
+                m.train_upload_time, world_size, device
+            )
+            train_upload_size_list += gather_value(
+                m.train_upload_size, world_size, device
+            )
+            train_download_size_list += gather_value(
+                m.train_download_size, world_size, device
+            )
         metrics = []
         # Note: Client id may not match with its training stats because all_gather string is not supported.
         client_id_list = [c.cid for c in self.selected_clients]
@@ -882,14 +986,20 @@ class BaseServer(object):
             if not client.profiled:
                 profile_required.append(client)
         if len(profile_required) > 0:
-            original = torch.FloatTensor([c.round_time for c in profile_required]).to(self.conf.device)
-            time_update = torch.FloatTensor([c.train_time for c in profile_required]).to(self.conf.device)
+            original = torch.FloatTensor([c.round_time for c in profile_required]).to(
+                self.conf.device
+            )
+            time_update = torch.FloatTensor(
+                [c.train_time for c in profile_required]
+            ).to(self.conf.device)
             dist.barrier()
             dist.all_reduce(time_update)
             for i in range(len(profile_required)):
                 old_round_time = original[i]
                 current_round_time = time_update[i]
-                if old_round_time == 0 or self._should_update_round_time(old_round_time, current_round_time):
+                if old_round_time == 0 or self._should_update_round_time(
+                    old_round_time, current_round_time
+                ):
                     profile_required[i].round_time = float(current_round_time)
                     profile_required[i].train_time = 0
                 else:
@@ -898,8 +1008,13 @@ class BaseServer(object):
     def update_default_time(self):
         """Update the estimated default training time of clients using actual training time from profiled clients."""
         default_momentum = self.conf.resource_heterogeneous.default_time_momentum
-        current_round_average = np.mean([float(c.round_time) for c in self.selected_clients])
-        self.default_time = default_momentum * current_round_average + self.default_time * (1 - default_momentum)
+        current_round_average = np.mean(
+            [float(c.round_time) for c in self.selected_clients]
+        )
+        self.default_time = (
+            default_momentum * current_round_average
+            + self.default_time * (1 - default_momentum)
+        )
 
     def _should_update_round_time(self, old_round_time, new_round_time, threshold=0.3):
         """Check whether assign a new estimated round time to client or set it to profiled.

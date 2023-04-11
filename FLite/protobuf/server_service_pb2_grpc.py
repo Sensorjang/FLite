@@ -2,7 +2,9 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from FLite.protobuf import server_service_pb2 as FLite_dot_protobuf_dot_server__service__pb2
+from FLite.protobuf import (
+    server_service_pb2 as FLite_dot_protobuf_dot_server__service__pb2,
+)
 
 
 class ServerServiceStub(object):
@@ -15,20 +17,20 @@ class ServerServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Upload = channel.unary_unary(
-                '/FLite.protobuf.ServerService/Upload',
-                request_serializer=FLite_dot_protobuf_dot_server__service__pb2.UploadRequest.SerializeToString,
-                response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.UploadResponse.FromString,
-                )
+            "/FLite.protobuf.ServerService/Upload",
+            request_serializer=FLite_dot_protobuf_dot_server__service__pb2.UploadRequest.SerializeToString,
+            response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.UploadResponse.FromString,
+        )
         self.Run = channel.unary_unary(
-                '/FLite.protobuf.ServerService/Run',
-                request_serializer=FLite_dot_protobuf_dot_server__service__pb2.RunRequest.SerializeToString,
-                response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.RunResponse.FromString,
-                )
+            "/FLite.protobuf.ServerService/Run",
+            request_serializer=FLite_dot_protobuf_dot_server__service__pb2.RunRequest.SerializeToString,
+            response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.RunResponse.FromString,
+        )
         self.Stop = channel.unary_unary(
-                '/FLite.protobuf.ServerService/Stop',
-                request_serializer=FLite_dot_protobuf_dot_server__service__pb2.StopRequest.SerializeToString,
-                response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.StopResponse.FromString,
-                )
+            "/FLite.protobuf.ServerService/Stop",
+            request_serializer=FLite_dot_protobuf_dot_server__service__pb2.StopRequest.SerializeToString,
+            response_deserializer=FLite_dot_protobuf_dot_server__service__pb2.StopResponse.FromString,
+        )
 
 
 class ServerServiceServicer(object):
@@ -37,96 +39,133 @@ class ServerServiceServicer(object):
     def Upload(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def Run(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
     def Stop(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        context.set_details("Method not implemented!")
+        raise NotImplementedError("Method not implemented!")
 
 
 def add_ServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Upload': grpc.unary_unary_rpc_method_handler(
-                    servicer.Upload,
-                    request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.UploadRequest.FromString,
-                    response_serializer=FLite_dot_protobuf_dot_server__service__pb2.UploadResponse.SerializeToString,
-            ),
-            'Run': grpc.unary_unary_rpc_method_handler(
-                    servicer.Run,
-                    request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.RunRequest.FromString,
-                    response_serializer=FLite_dot_protobuf_dot_server__service__pb2.RunResponse.SerializeToString,
-            ),
-            'Stop': grpc.unary_unary_rpc_method_handler(
-                    servicer.Stop,
-                    request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.StopRequest.FromString,
-                    response_serializer=FLite_dot_protobuf_dot_server__service__pb2.StopResponse.SerializeToString,
-            ),
+        "Upload": grpc.unary_unary_rpc_method_handler(
+            servicer.Upload,
+            request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.UploadRequest.FromString,
+            response_serializer=FLite_dot_protobuf_dot_server__service__pb2.UploadResponse.SerializeToString,
+        ),
+        "Run": grpc.unary_unary_rpc_method_handler(
+            servicer.Run,
+            request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.RunRequest.FromString,
+            response_serializer=FLite_dot_protobuf_dot_server__service__pb2.RunResponse.SerializeToString,
+        ),
+        "Stop": grpc.unary_unary_rpc_method_handler(
+            servicer.Stop,
+            request_deserializer=FLite_dot_protobuf_dot_server__service__pb2.StopRequest.FromString,
+            response_serializer=FLite_dot_protobuf_dot_server__service__pb2.StopResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'FLite.protobuf.ServerService', rpc_method_handlers)
+        "FLite.protobuf.ServerService", rpc_method_handlers
+    )
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class ServerService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Upload(request,
+    def Upload(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/FLite.protobuf.ServerService/Upload',
+            "/FLite.protobuf.ServerService/Upload",
             FLite_dot_protobuf_dot_server__service__pb2.UploadRequest.SerializeToString,
             FLite_dot_protobuf_dot_server__service__pb2.UploadResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def Run(request,
+    def Run(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/FLite.protobuf.ServerService/Run',
+            "/FLite.protobuf.ServerService/Run",
             FLite_dot_protobuf_dot_server__service__pb2.RunRequest.SerializeToString,
             FLite_dot_protobuf_dot_server__service__pb2.RunResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def Stop(request,
+    def Stop(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/FLite.protobuf.ServerService/Stop',
+            "/FLite.protobuf.ServerService/Stop",
             FLite_dot_protobuf_dot_server__service__pb2.StopRequest.SerializeToString,
             FLite_dot_protobuf_dot_server__service__pb2.StopResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

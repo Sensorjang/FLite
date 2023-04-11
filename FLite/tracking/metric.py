@@ -14,15 +14,15 @@ PREFIX_TASK_ID = "task"
 CONFIGURATION = "configuration"
 
 # clients
-SELECTED_CLIENTS = 'selected_clients'
-GROUPED_CLIENTS = 'grouped_clients'
+SELECTED_CLIENTS = "selected_clients"
+GROUPED_CLIENTS = "grouped_clients"
 
 # communication cost
-DOWNLOAD_SIZE = 'download_size'
-TRAIN_DOWNLOAD_SIZE = 'train_download_size'
-TRAIN_UPLOAD_SIZE = 'train_upload_size'
-TEST_DOWNLOAD_SIZE = 'test_download_size'
-TEST_UPLOAD_SIZE = 'test_upload_size'
+DOWNLOAD_SIZE = "download_size"
+TRAIN_DOWNLOAD_SIZE = "train_download_size"
+TRAIN_UPLOAD_SIZE = "train_upload_size"
+TEST_DOWNLOAD_SIZE = "test_download_size"
+TEST_UPLOAD_SIZE = "test_upload_size"
 
 # distribute time
 UPLOAD_TIME = "upload_time"
@@ -33,20 +33,20 @@ TEST_DISTRIBUTE_TIME = "test_distribute_time"
 
 # time
 ROUND_TIME = "round_time"
-TRAIN_TIME = 'train_time'
-TEST_TIME = 'test_time'
-TRAIN_EPOCH_TIME = 'train_epoch_time'
+TRAIN_TIME = "train_time"
+TEST_TIME = "test_time"
+TRAIN_EPOCH_TIME = "train_epoch_time"
 
 # performance
-TRAIN_ACCURACY = 'train_accuracy'
-TRAIN_LOSS = 'train_loss'
-AVG_TRAIN_LOSS = 'avg_train_loss'
+TRAIN_ACCURACY = "train_accuracy"
+TRAIN_LOSS = "train_loss"
+AVG_TRAIN_LOSS = "avg_train_loss"
 
-TEST_ACCURACY = 'test_accuracy'
-TEST_LOSS = 'test_loss'
+TEST_ACCURACY = "test_accuracy"
+TEST_LOSS = "test_loss"
 
-TEST_LOCAL_ACCURACY = 'test_local_accuracy'
-TEST_LOCAL_LOSS = 'test_local_loss'
+TEST_LOCAL_ACCURACY = "test_local_accuracy"
+TEST_LOCAL_LOSS = "test_local_loss"
 
 # general
 EXTRA = "extra"  # for not specifically defined metrics
@@ -58,13 +58,10 @@ logger = logging.getLogger(__name__)
 
 class Metric(object):
     def __init__(self):
-        self.metrics = {
-            EXTRA: {}
-        }
+        self.metrics = {EXTRA: {}}
 
     def add(self, metric_name, metric_value, convert=True):
-        """Add metrics. Add to "extra" if the metric is not predefined.
-        """
+        """Add metrics. Add to "extra" if the metric is not predefined."""
         if self.predefined_metrics() and metric_name in self.predefined_metrics():
             if convert:
                 metric_value = self._value_conversion(metric_value)
@@ -92,8 +89,7 @@ class Metric(object):
 
     @staticmethod
     def _value_conversion(value):
-        """Convert float to keep only 4 decimal points
-        """
+        """Convert float to keep only 4 decimal points"""
         if isinstance(value, float):
             value = np.around(value, 4)
         elif isinstance(value, list) and len(value) > 0 and isinstance(value[0], float):
@@ -133,8 +129,7 @@ class TaskMetric(object):
 
     def to_proto(self):
         return common_pb.TaskMetric(
-            task_id=self.task_id,
-            configuration=json.dumps(self.configuration)
+            task_id=self.task_id, configuration=json.dumps(self.configuration)
         )
 
     @classmethod
@@ -182,45 +177,48 @@ class RoundMetric(Metric):
 
     @property
     def train_upload_size(self):
-        """Communication cost of uploading content from client to server
-        """
+        """Communication cost of uploading content from client to server"""
         return self.get(TRAIN_UPLOAD_SIZE)
 
     @property
     def train_download_size(self):
-        """Communication cost of distributing content from server to client
-        """
+        """Communication cost of distributing content from server to client"""
         return self.get(TRAIN_DOWNLOAD_SIZE)
 
     @property
     def test_upload_size(self):
-        """Communication cost of uploading content from client to server
-        """
+        """Communication cost of uploading content from client to server"""
         return self.get(TEST_UPLOAD_SIZE)
 
     @property
     def test_download_size(self):
-        """Communication cost of distributing content from server to client
-        """
+        """Communication cost of distributing content from server to client"""
         return self.get(TEST_DOWNLOAD_SIZE)
 
     @property
     def communication_cost(self):
-        return self.train_upload_size + self.train_download_size + self.test_upload_size + self.test_download_size
+        return (
+            self.train_upload_size
+            + self.train_download_size
+            + self.test_upload_size
+            + self.test_download_size
+        )
 
     @classmethod
     def predefined_metrics(cls):
-        return [TEST_ACCURACY,
-                TEST_LOSS,
-                ROUND_TIME,
-                TRAIN_TIME,
-                TEST_TIME,
-                TRAIN_DISTRIBUTE_TIME,
-                TEST_DISTRIBUTE_TIME,
-                TRAIN_UPLOAD_SIZE,
-                TRAIN_DOWNLOAD_SIZE,
-                TEST_UPLOAD_SIZE,
-                TEST_DOWNLOAD_SIZE]
+        return [
+            TEST_ACCURACY,
+            TEST_LOSS,
+            ROUND_TIME,
+            TRAIN_TIME,
+            TEST_TIME,
+            TRAIN_DISTRIBUTE_TIME,
+            TEST_DISTRIBUTE_TIME,
+            TRAIN_UPLOAD_SIZE,
+            TRAIN_DOWNLOAD_SIZE,
+            TEST_UPLOAD_SIZE,
+            TEST_DOWNLOAD_SIZE,
+        ]
 
     @classmethod
     def from_sql(cls, sql_result):
@@ -234,20 +232,22 @@ class RoundMetric(Metric):
         return m
 
     def to_sql_param(self):
-        return (self.task_id,
-                self.round_id,
-                self.test_accuracy,
-                self.test_loss,
-                self.round_time,
-                self.train_time,
-                self.test_time,
-                self.train_distribute_time,
-                self.test_distribute_time,
-                self.train_upload_size,
-                self.train_download_size,
-                self.test_upload_size,
-                self.test_download_size,
-                json.dumps(self.extra))
+        return (
+            self.task_id,
+            self.round_id,
+            self.test_accuracy,
+            self.test_loss,
+            self.round_time,
+            self.train_time,
+            self.test_time,
+            self.train_distribute_time,
+            self.test_distribute_time,
+            self.train_upload_size,
+            self.train_download_size,
+            self.test_upload_size,
+            self.test_download_size,
+            json.dumps(self.extra),
+        )
 
     def to_proto(self):
         return common_pb.RoundMetric(
@@ -264,24 +264,26 @@ class RoundMetric(Metric):
             train_download_size=self.train_download_size,
             test_upload_size=self.test_upload_size,
             test_download_size=self.test_download_size,
-            extra=json.dumps(self.extra)
+            extra=json.dumps(self.extra),
         )
 
     @classmethod
     def from_proto(cls, proto):
         m = cls(proto.task_id, proto.round_id)
         metrics = cls.predefined_metrics()
-        values = [proto.test_accuracy,
-                  proto.test_loss,
-                  proto.round_time,
-                  proto.train_time,
-                  proto.test_time,
-                  proto.train_distribute_time,
-                  proto.test_distribute_time,
-                  proto.train_upload_size,
-                  proto.train_download_size,
-                  proto.test_upload_size,
-                  proto.test_download_size]
+        values = [
+            proto.test_accuracy,
+            proto.test_loss,
+            proto.round_time,
+            proto.train_time,
+            proto.test_time,
+            proto.train_distribute_time,
+            proto.test_distribute_time,
+            proto.train_upload_size,
+            proto.train_download_size,
+            proto.test_upload_size,
+            proto.test_download_size,
+        ]
         for name, value in zip(metrics, values):
             m.add(name, value)
 
@@ -292,8 +294,7 @@ class RoundMetric(Metric):
 
 
 class ClientMetric(Metric):
-    """Metrics for a client in a round of training.
-    """
+    """Metrics for a client in a round of training."""
 
     def __init__(self, task_id, round_id, client_id):
         super().__init__()
@@ -351,22 +352,29 @@ class ClientMetric(Metric):
 
     @property
     def communication_cost(self):
-        return self.train_upload_size + self.train_download_size + self.test_upload_size + self.test_download_size
+        return (
+            self.train_upload_size
+            + self.train_download_size
+            + self.test_upload_size
+            + self.test_download_size
+        )
 
     @classmethod
     def predefined_metrics(cls):
-        return [TRAIN_ACCURACY,
-                TRAIN_LOSS,
-                TEST_ACCURACY,
-                TEST_LOSS,
-                TRAIN_TIME,
-                TEST_TIME,
-                TRAIN_UPLOAD_TIME,
-                TEST_UPLOAD_TIME,
-                TRAIN_UPLOAD_SIZE,
-                TRAIN_DOWNLOAD_SIZE,
-                TEST_UPLOAD_SIZE,
-                TEST_DOWNLOAD_SIZE]
+        return [
+            TRAIN_ACCURACY,
+            TRAIN_LOSS,
+            TEST_ACCURACY,
+            TEST_LOSS,
+            TRAIN_TIME,
+            TEST_TIME,
+            TRAIN_UPLOAD_TIME,
+            TEST_UPLOAD_TIME,
+            TRAIN_UPLOAD_SIZE,
+            TRAIN_DOWNLOAD_SIZE,
+            TEST_UPLOAD_SIZE,
+            TEST_DOWNLOAD_SIZE,
+        ]
 
     @classmethod
     def from_sql(cls, sql_result):
@@ -382,22 +390,24 @@ class ClientMetric(Metric):
         return m
 
     def to_sql_param(self):
-        return (self.task_id,
-                self.round_id,
-                self.client_id,
-                json.dumps(self.train_accuracy),
-                json.dumps(self.train_loss),
-                self.test_accuracy,
-                self.test_loss,
-                self.train_time,
-                self.test_time,
-                self.train_upload_time,
-                self.test_upload_time,
-                self.train_upload_size,
-                self.train_download_size,
-                self.test_upload_size,
-                self.test_download_size,
-                json.dumps(self.extra))
+        return (
+            self.task_id,
+            self.round_id,
+            self.client_id,
+            json.dumps(self.train_accuracy),
+            json.dumps(self.train_loss),
+            self.test_accuracy,
+            self.test_loss,
+            self.train_time,
+            self.test_time,
+            self.train_upload_time,
+            self.test_upload_time,
+            self.train_upload_size,
+            self.train_download_size,
+            self.test_upload_size,
+            self.test_download_size,
+            json.dumps(self.extra),
+        )
 
     def to_proto(self):
         return common_pb.ClientMetric(
@@ -416,7 +426,7 @@ class ClientMetric(Metric):
             train_download_size=self.train_download_size,
             test_upload_size=self.test_upload_size,
             test_download_size=self.test_download_size,
-            extra=json.dumps(self.extra)
+            extra=json.dumps(self.extra),
         )
 
     @classmethod
@@ -425,18 +435,20 @@ class ClientMetric(Metric):
         train_accuracy = [x for x in proto.train_accuracy]
         train_loss = [x for x in proto.train_loss]
         metrics = cls.predefined_metrics()
-        values = [train_accuracy,
-                  train_loss,
-                  proto.test_accuracy,
-                  proto.test_loss,
-                  proto.train_time,
-                  proto.test_time,
-                  proto.train_upload_time,
-                  proto.test_upload_time,
-                  proto.train_upload_size,
-                  proto.train_download_size,
-                  proto.test_upload_size,
-                  proto.test_download_size]
+        values = [
+            train_accuracy,
+            train_loss,
+            proto.test_accuracy,
+            proto.test_loss,
+            proto.train_time,
+            proto.test_time,
+            proto.train_upload_time,
+            proto.test_upload_time,
+            proto.train_upload_size,
+            proto.train_download_size,
+            proto.test_upload_size,
+            proto.test_download_size,
+        ]
         for name, value in zip(metrics, values):
             m.add(name, value)
 
@@ -464,12 +476,15 @@ class ClientMetric(Metric):
             self.metrics[TEST_DOWNLOAD_SIZE] = m.test_download_size
 
     def is_same_metric(self, m):
-        return self.task_id == m.task_id and self.round_id == m.round_id and self.client_id == m.client_id
+        return (
+            self.task_id == m.task_id
+            and self.round_id == m.round_id
+            and self.client_id == m.client_id
+        )
 
     @classmethod
     def merge_train_to_test_metrics(cls, train_metrics, test_metrics):
-        """Merge train metrics to test_metrics
-        """
+        """Merge train metrics to test_metrics"""
         train_metrics_ = {m.client_id: m for m in train_metrics}
         for test_metric in test_metrics:
             client_id = test_metric.client_id

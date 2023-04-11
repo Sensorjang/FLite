@@ -38,10 +38,10 @@ class EtcdClient(object):
 
     def __init__(self, name, addrs, base_dir, use_mock_etcd=False):
         self._name = name
-        self._base_dir = '/' + EtcdClient._normalize_input_key(base_dir)
+        self._base_dir = "/" + EtcdClient._normalize_input_key(base_dir)
         self._addrs = self._normalize_addr(addrs)
         if len(self._addrs) == 0:
-            raise ValueError('Empty hosts EtcdClient')
+            raise ValueError("Empty hosts EtcdClient")
         self._cur_addr_idx = random.randint(0, len(self._addrs) - 1)
         self._use_mock_etcd = use_mock_etcd
 
@@ -92,7 +92,7 @@ class EtcdClient(object):
         kvs = []
         path = self._generate_path(prefix)
         with EtcdClient.closing(self._name, addr, self._use_mock_etcd) as clnt:
-            for (data, key) in clnt.get_prefix(path, sort_order='ascend'):
+            for (data, key) in clnt.get_prefix(path, sort_order="ascend"):
                 if ignore_prefix and key.key == path.encode():
                     continue
                 nkey = EtcdClient.normalize_output_key(key.key, self._base_dir)
@@ -129,7 +129,7 @@ class EtcdClient(object):
         return len(address.split(":")) > 1
 
     def _generate_path(self, key):
-        return '/'.join([self._base_dir, self._normalize_input_key(key)])
+        return "/".join([self._base_dir, self._normalize_input_key(key)])
 
     def _get_next_addr(self):
         return self._addrs[random.randint(0, len(self._addrs) - 1)]
@@ -137,21 +137,21 @@ class EtcdClient(object):
     @staticmethod
     def _normalize_addr(addrs):
         naddrs = []
-        for raw_addr in addrs.split(','):
-            (host, port_str) = raw_addr.split(':')
+        for raw_addr in addrs.split(","):
+            (host, port_str) = raw_addr.split(":")
             try:
                 port = int(port_str)
                 if port < 0 or port > 65535:
-                    raise ValueError('port {} is out of range')
+                    raise ValueError("port {} is out of range")
             except ValueError:
-                raise ValueError('{} is not a valid port'.format(port_str))
+                raise ValueError("{} is not a valid port".format(port_str))
             naddrs.append((host, port))
         return naddrs
 
     @staticmethod
     def _normalize_input_key(key):
         skip_cnt = 0
-        while key[skip_cnt] == '.' or key[skip_cnt] == '/':
+        while key[skip_cnt] == "." or key[skip_cnt] == "/":
             skip_cnt += 1
         if skip_cnt > 0:
             return key[skip_cnt:]
@@ -163,15 +163,14 @@ class EtcdClient(object):
             assert key.startswith(base_dir.encode())
         else:
             assert key.startswith(base_dir)
-        return key[len(base_dir) + 1:]
+        return key[len(base_dir) + 1 :]
 
     @classmethod
     @contextmanager
     def closing(cls, name, addr, use_mock_etcd):
         clnt = None
         with cls.ETCD_CLIENT_POOL_LOCK:
-            if (name in cls.ETCD_CLIENT_POOL and
-                    len(cls.ETCD_CLIENT_POOL[name]) > 0):
+            if name in cls.ETCD_CLIENT_POOL and len(cls.ETCD_CLIENT_POOL[name]) > 0:
                 clnt = cls.ETCD_CLIENT_POOL[name][0]
                 cls.ETCD_CLIENT_POOL[name] = cls.ETCD_CLIENT_POOL[name][1:]
         if clnt is None:

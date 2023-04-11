@@ -2,7 +2,9 @@ import logging
 import os
 
 from FLite.datasets.shakespeare.preprocess.gen_all_data import generated_all_data
-from FLite.datasets.shakespeare.preprocess.preprocess_shakespeare import shakespeare_preprocess
+from FLite.datasets.shakespeare.preprocess.preprocess_shakespeare import (
+    shakespeare_preprocess,
+)
 from FLite.datasets.BaseDatasets import BaseDataset
 from FLite.datasets.utils.datasets_download import download_url, extract_archive
 
@@ -18,37 +20,41 @@ class Shakespeare(BaseDataset):
         write_url (str): The url to get the `by_write` split shakespeare.
     """
 
-    def __init__(self,
-                 root,
-                 fraction,
-                 split_type,
-                 user,
-                 iid_user_fraction=0.1,
-                 train_test_split=0.9,
-                 minsample=10,
-                 num_class=80,
-                 num_of_client=100,
-                 class_per_client=2,
-                 setting_folder=None,
-                 seed=-1,
-                 **kwargs):
-        super(Shakespeare, self).__init__(root,
-                                          "shakespeare",
-                                          fraction,
-                                          split_type,
-                                          user,
-                                          iid_user_fraction,
-                                          train_test_split,
-                                          minsample,
-                                          num_class,
-                                          num_of_client,
-                                          class_per_client,
-                                          setting_folder,
-                                          seed)
+    def __init__(
+        self,
+        root,
+        fraction,
+        split_type,
+        user,
+        iid_user_fraction=0.1,
+        train_test_split=0.9,
+        minsample=10,
+        num_class=80,
+        num_of_client=100,
+        class_per_client=2,
+        setting_folder=None,
+        seed=-1,
+        **kwargs
+    ):
+        super(Shakespeare, self).__init__(
+            root,
+            "shakespeare",
+            fraction,
+            split_type,
+            user,
+            iid_user_fraction,
+            train_test_split,
+            minsample,
+            num_class,
+            num_of_client,
+            class_per_client,
+            setting_folder,
+            seed,
+        )
         self.raw_data_url = "http://www.gutenberg.org/files/100/old/1994-01-100.zip"
         self.packaged_data_files = {
             "shakespeare_niid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/5qr9ozziy3yfzss/shakespeare_niid_100_10_1_0.05_0.1_sample_0.9.zip",
-            "shakespeare_iid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/4p7osgjd2pecsi3/shakespeare_iid_100_10_1_0.05_0.1_sample_0.9.zip"
+            "shakespeare_iid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/4p7osgjd2pecsi3/shakespeare_iid_100_10_1_0.05_0.1_sample_0.9.zip",
         }
         # Google drive ids.
         # self.packaged_data_files = {
@@ -69,7 +75,10 @@ class Shakespeare(BaseDataset):
             return
         raw_data_path = download_url(self.raw_data_url, raw_data_folder)
         extract_archive(raw_data_path)
-        os.rename(os.path.join(raw_data_folder, "100.txt"), os.path.join(raw_data_folder, "raw_data.txt"))
+        os.rename(
+            os.path.join(raw_data_folder, "100.txt"),
+            os.path.join(raw_data_folder, "raw_data.txt"),
+        )
         logger.info("raw file is downloaded")
 
     def preprocess(self):

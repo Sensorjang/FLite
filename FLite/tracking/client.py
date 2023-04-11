@@ -18,8 +18,7 @@ class TrackingClient(object):
     """
 
     def __init__(self, db_path=None, db_address=None, init_store=True):
-        """If storage is not initialized, the tracking client can only collect metrics but not save them.
-        """
+        """If storage is not initialized, the tracking client can only collect metrics but not save them."""
         self._task_id = None
         self._round_id = None
         self._client_id = None
@@ -33,8 +32,7 @@ class TrackingClient(object):
             self._storage = get_store(db_path, db_address)
 
     def get_task_metric(self, task_id):
-        """Get task from storage
-        """
+        """Get task from storage"""
         task_metric = self._storage.get_task_metric(task_id)
         if task_metric is None:
             return
@@ -46,8 +44,11 @@ class TrackingClient(object):
         return self._storage.get_round_metrics(task_id, [round_id])
 
     def get_client_metric(self, client_id=None, round_id=None, task_id=None):
-        if (task_id == self._task_id and round_id == self._round_id and client_id == self._client_id) or \
-                (client_id is None and round_id is None and task_id is None):
+        if (
+            task_id == self._task_id
+            and round_id == self._round_id
+            and client_id == self._client_id
+        ) or (client_id is None and round_id is None and task_id is None):
             return self._current_client
         return self._storage.get_client_metrics(task_id, round_id, [client_id])
 
@@ -88,7 +89,9 @@ class TrackingClient(object):
             raise ValueError("client_id cannot be None to create client.")
 
         if reset or not self._current_client or client_id != self._client_id:
-            self._current_client = ClientMetric(self._task_id, self._round_id, client_id)
+            self._current_client = ClientMetric(
+                self._task_id, self._round_id, client_id
+            )
             self._client_id = client_id
             return
 
@@ -200,8 +203,7 @@ def init_tracking(path=None, address=None, init_store=True):
 
 
 def setup_tracking(path=None, address=None):
-    """Setup tracking with global tracking client.
-    """
+    """Setup tracking with global tracking client."""
     global _client
     _client = init_tracking(path, address)
 

@@ -3,7 +3,9 @@ These codes are adopted from LEAF.
 """
 # preprocess for shakespeare dataset
 
-ALL_LETTERS = "\n !\"&'(),-.0123456789:;>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz}"
+ALL_LETTERS = (
+    "\n !\"&'(),-.0123456789:;>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz}"
+)
 NUM_LETTERS = len(ALL_LETTERS)
 
 
@@ -25,7 +27,7 @@ def word_to_indices(word):
 
     Args:
         word: string
-    
+
     Return:
         indices: int list with length len(word)
     """

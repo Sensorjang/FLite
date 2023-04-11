@@ -5,7 +5,9 @@ from FLite.client.BaseClient import BaseClient as client_base
 from FLite.server.BaseServer import BaseServer as server_base
 
 
-def start_remote_client(conf=None, train_data=None, test_data=None, model=None, client=None):
+def start_remote_client(
+    conf=None, train_data=None, test_data=None, model=None, client=None
+):
     """Start a remote client.
 
     Args:
@@ -17,8 +19,12 @@ def start_remote_client(conf=None, train_data=None, test_data=None, model=None, 
         client (:obj:`BaseClient`): Customized federated learning client class.
     """
     parser = client_base.create_argument_parser()
-    parser.add_argument('--index', type=int, default=0, help='Client index for quick testing')
-    parser.add_argument('--config', type=str, default="client_config.yaml", help='Client config file')
+    parser.add_argument(
+        "--index", type=int, default=0, help="Client index for quick testing"
+    )
+    parser.add_argument(
+        "--config", type=str, default="client_config.yaml", help="Client config file"
+    )
     args = parser.parse_args()
 
     if os.path.isfile(args.config):
@@ -52,7 +58,9 @@ def start_remote_server(conf=None, test_data=None, model=None, server=None):
         server (:obj:`BaseServer`): Customized federated learning server class.
     """
     parser = server_base.create_argument_parser()
-    parser.add_argument('--config', type=str, default="server_config.yaml", help='Server config file')
+    parser.add_argument(
+        "--config", type=str, default="server_config.yaml", help="Server config file"
+    )
     args = parser.parse_args()
 
     if os.path.isfile(args.config):

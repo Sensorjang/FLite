@@ -21,7 +21,9 @@ def get_k8s_clients():
 
     v1 = client.CoreV1Api()
 
-    ret = v1.list_namespaced_endpoints('FLite', watch=False, field_selector="metadata.name=FLite-client-svc")
+    ret = v1.list_namespaced_endpoints(
+        "FLite", watch=False, field_selector="metadata.name=FLite-client-svc"
+    )
 
     clients = []
     for record in ret.items:
@@ -32,6 +34,7 @@ def get_k8s_clients():
                 c = VirtualClient(address.target_ref.name, addr, index)
                 clients.append(c)
     return clients
+
 
 def get_clients(source, etcd_addresses=None):
     """Get clients from registry.
@@ -44,7 +47,10 @@ def get_clients(source, etcd_addresses=None):
     """
 
     if source == SOURCE_MANUAL:
-        return [VirtualClient("1", "localhost:23400", 0), VirtualClient("2", "localhost:23401", 1)]
+        return [
+            VirtualClient("1", "localhost:23400", 0),
+            VirtualClient("2", "localhost:23401", 1),
+        ]
     elif source == SOURCE_ETCD:
         etcd = etcd_client.EtcdClient("server", etcd_addresses, "backends")
         return etcd.get_clients(CLIENT_DOCKER_IMAGE)

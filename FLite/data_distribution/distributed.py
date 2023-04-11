@@ -134,7 +134,7 @@ def grouping(clients, world_size, default_time=10, strategy=RANDOMIZE_GROUPING, 
 
 
 def randomize_grouping(clients, world_size):
-    """"Randomly divide clients into groups.
+    """ "Randomly divide clients into groups.
 
     Args:
         clients (list[:obj:`BaseClient`]): A list of clients.
@@ -151,17 +151,17 @@ def randomize_grouping(clients, world_size):
     grouped_clients = []
     for i in range(small_group_num):
         base_index = data_per_client * i
-        grouped_clients.append(clients[base_index: base_index + data_per_client])
+        grouped_clients.append(clients[base_index : base_index + data_per_client])
     small_size = data_per_client * small_group_num
     data_per_client += 1
     for i in range(large_group_num):
         base_index = small_size + data_per_client * i
-        grouped_clients.append(clients[base_index: base_index + data_per_client])
+        grouped_clients.append(clients[base_index : base_index + data_per_client])
     return grouped_clients
 
 
 def greedy_grouping(clients, world_size, default_time):
-    """"Greedily allocate the clients with longest training time to the most available device.
+    """ "Greedily allocate the clients with longest training time to the most available device.
 
 
     Args:
@@ -172,9 +172,13 @@ def greedy_grouping(clients, world_size, default_time):
     Returns:
         list[list[:obj:`BaseClient`]]: Groups of clients, each group is a sub-list.
     """
-    round_time_estimation = [[i, c.round_time] if c.round_time != 0
-                             else [i, default_time] for i, c in enumerate(clients)]
-    round_time_estimation = sorted(round_time_estimation, reverse=True, key=lambda tup: (tup[1], tup[0]))
+    round_time_estimation = [
+        [i, c.round_time] if c.round_time != 0 else [i, default_time]
+        for i, c in enumerate(clients)
+    ]
+    round_time_estimation = sorted(
+        round_time_estimation, reverse=True, key=lambda tup: (tup[1], tup[0])
+    )
     top_world_size = round_time_estimation[:world_size]
     groups = [[clients[index]] for (index, time) in top_world_size]
     time_sum = [time for (index, time) in top_world_size]
@@ -186,7 +190,7 @@ def greedy_grouping(clients, world_size, default_time):
 
 
 def slowest_grouping(clients, world_size):
-    """"Allocate the clients with longest training time to the most busy device.
+    """ "Allocate the clients with longest training time to the most busy device.
     Only for experiment, not practical in use.
 
 
@@ -205,12 +209,12 @@ def slowest_grouping(clients, world_size):
     grouped_clients = []
     for i in range(small_group_num):
         base_index = data_per_client * i
-        grouped_clients.append(clients[base_index: base_index + data_per_client])
+        grouped_clients.append(clients[base_index : base_index + data_per_client])
     small_size = data_per_client * small_group_num
     data_per_client += 1
     for i in range(large_group_num):
         base_index = small_size + data_per_client * i
-        grouped_clients.append(clients[base_index: base_index + data_per_client])
+        grouped_clients.append(clients[base_index : base_index + data_per_client])
     return grouped_clients
 
 
@@ -228,7 +232,9 @@ def dist_init(backend, init_method, world_size, rank, local_rank):
         int: Rank of current process.
         int: Total number of processes.
     """
-    dist.init_process_group(backend, init_method=init_method, rank=rank, world_size=world_size)
+    dist.init_process_group(
+        backend, init_method=init_method, rank=rank, world_size=world_size
+    )
     assert dist.is_initialized()
     return rank, world_size
 

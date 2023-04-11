@@ -22,7 +22,7 @@ def get_hash(base_folder):
 
     count = 0
     for tup in class_file_dirs:
-        if (count % 100000 == 0):
+        if count % 100000 == 0:
             logger.info("hashed %d class images" % count)
 
         (cclass, cfile) = tup
@@ -39,7 +39,7 @@ def get_hash(base_folder):
 
     count = 0
     for tup in write_file_dirs:
-        if (count % 100000 == 0):
+        if count % 100000 == 0:
             logger.info("hashed %d write images" % count)
 
         (cclass, cfile) = tup

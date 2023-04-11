@@ -7,7 +7,6 @@ from FLite.tracking import storage
 
 
 class TrackingClientTest(unittest.TestCase):
-
     def __init__(self, *args, **kwargs):
         super(TrackingClientTest, self).__init__(*args, **kwargs)
         self._database = os.path.join(os.getcwd(), "tracker", "FLite_test.db")
@@ -91,7 +90,9 @@ class TrackingClientTest(unittest.TestCase):
         # test error
         tracker = client.init_tracking(self._database)
         self.assertRaises(LookupError, tracker.create_client, client_id)
-        self.assertRaises(LookupError, tracker.track_client, metric.TEST_ACCURACY, [want_accuracy])
+        self.assertRaises(
+            LookupError, tracker.track_client, metric.TEST_ACCURACY, [want_accuracy]
+        )
 
         # test track and get client
         tracker.set_client_context(task_id, round_id, client_id)
@@ -121,7 +122,9 @@ class TrackingClientTest(unittest.TestCase):
 
         client_metrics = [tracker.get_client_metric(), tracker2.get_client_metric()]
         tracker.save_clients(client_metrics)
-        results = self._store.get_client_metrics(task_id, round_id, [client_id, client_id_2])
+        results = self._store.get_client_metrics(
+            task_id, round_id, [client_id, client_id_2]
+        )
         metrics = [metric.ClientMetric.from_sql(r) for r in results]
         self.assertEqual(len(metrics), 2)
         self.assertEqual(len(metrics[1].extra), 2)
@@ -132,5 +135,5 @@ class TrackingClientTest(unittest.TestCase):
         self.assertEqual(metrics[1].extra["rank1"], want_rank1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

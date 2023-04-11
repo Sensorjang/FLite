@@ -16,15 +16,15 @@ def read_dir(data_dir):
     data = {}
 
     files = os.listdir(data_dir)
-    files = [f for f in files if f.endswith('.json')]
+    files = [f for f in files if f.endswith(".json")]
     for f in files:
         file_path = os.path.join(data_dir, f)
-        with open(file_path, 'r') as inf:
+        with open(file_path, "r") as inf:
             cdata = json.load(inf)
-        clients.extend(cdata['users'])
-        if 'hierarchies' in cdata:
-            groups.extend(cdata['hierarchies'])
-        data.update(cdata['user_data'])
+        clients.extend(cdata["users"])
+        if "hierarchies" in cdata:
+            groups.extend(cdata["hierarchies"])
+        data.update(cdata["user_data"])
 
     clients = list(sorted(data.keys()))
     return clients, groups, data
@@ -60,18 +60,20 @@ def read_data(dataset_name, train_data_dir, test_data_dir):
     return train_clients, train_groups, train_data, test_data
 
 
-def load_data(root,
-              dataset_name,
-              num_of_clients,
-              split_type,
-              min_size,
-              class_per_client,
-              data_amount,
-              iid_fraction,
-              user,
-              train_test_split,
-              quantity_weights,
-              alpha):
+def load_data(
+    root,
+    dataset_name,
+    num_of_clients,
+    split_type,
+    min_size,
+    class_per_client,
+    data_amount,
+    iid_fraction,
+    user,
+    train_test_split,
+    quantity_weights,
+    alpha,
+):
     """Simulate and load federated datasets.
 
     Args:
@@ -111,13 +113,27 @@ def load_data(root,
         torchvision.transforms.transforms.Compose: Testing data transformation.
     """
     user_str = "user" if user else "sample"
-    setting = BaseDataset.get_setting_folder(dataset_name, split_type, num_of_clients, min_size, class_per_client,
-                                             data_amount, iid_fraction, user_str, train_test_split, alpha,
-                                             quantity_weights)
+    setting = BaseDataset.get_setting_folder(
+        dataset_name,
+        split_type,
+        num_of_clients,
+        min_size,
+        class_per_client,
+        data_amount,
+        iid_fraction,
+        user_str,
+        train_test_split,
+        alpha,
+        quantity_weights,
+    )
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    dataset_file = os.path.join(dir_path, "data_processor", "{}.py".format(dataset_name))
+    dataset_file = os.path.join(
+        dir_path, "data_processor", "{}.py".format(dataset_name)
+    )
     if not os.path.exists(dataset_file):
-        logger.error("Please specify a valid process file path for process_x and process_y functions.")
+        logger.error(
+            "Please specify a valid process file path for process_x and process_y functions."
+        )
     dataset_path = "FLite.datasets.data_processor.{}".format(dataset_name)
     dataset_lib = importlib.import_module(dataset_path)
     process_x = getattr(dataset_lib, "process_x", None)
@@ -135,18 +151,20 @@ def load_data(root,
         dataset_class_path = "FLite.datasets.{}.{}".format(dataset_name, dataset_name)
         dataset_class_lib = importlib.import_module(dataset_class_path)
         class_name = dataset_name.capitalize()
-        dataset = getattr(dataset_class_lib, class_name)(root=data_dir,
-                                                         fraction=data_amount,
-                                                         split_type=split_type,
-                                                         user=user,
-                                                         iid_user_fraction=iid_fraction,
-                                                         train_test_split=train_test_split,
-                                                         minsample=min_size,
-                                                         num_of_client=num_of_clients,
-                                                         class_per_client=class_per_client,
-                                                         setting_folder=setting,
-                                                         alpha=alpha,
-                                                         weights=quantity_weights)
+        dataset = getattr(dataset_class_lib, class_name)(
+            root=data_dir,
+            fraction=data_amount,
+            split_type=split_type,
+            user=user,
+            iid_user_fraction=iid_fraction,
+            train_test_split=train_test_split,
+            minsample=min_size,
+            num_of_client=num_of_clients,
+            class_per_client=class_per_client,
+            setting_folder=setting,
+            alpha=alpha,
+            weights=quantity_weights,
+        )
         try:
             filename = f"{setting}.zip"
             dataset.download_packaged_dataset_and_extract(filename)
@@ -160,22 +178,26 @@ def load_data(root,
         if not os.path.exists(train_data_dir):
             dataset.sampling()
 
-    users, train_groups, train_data, test_data = read_data(dataset_name, train_data_dir, test_data_dir)
+    users, train_groups, train_data, test_data = read_data(
+        dataset_name, train_data_dir, test_data_dir
+    )
     return train_data, test_data, process_x, process_y, transform_train, transform_test
 
 
-def construct_datasets(root,
-                       dataset_name,
-                       num_of_clients,
-                       split_type,
-                       min_size,
-                       class_per_client,
-                       data_amount,
-                       iid_fraction,
-                       user,
-                       train_test_split,
-                       quantity_weights,
-                       alpha):
+def construct_datasets(
+    root,
+    dataset_name,
+    num_of_clients,
+    split_type,
+    min_size,
+    class_per_client,
+    data_amount,
+    iid_fraction,
+    user,
+    train_test_split,
+    quantity_weights,
+    alpha,
+):
     """Construct and load provided federated learning datasets.
 
     Args:
@@ -210,34 +232,47 @@ def construct_datasets(root,
         :obj:`FederatedDataset`: Training dataset.
         :obj:`FederatedDataset`: Testing dataset.
     """
-    train_data, test_data, process_x, process_y, transform_train, transform_test = load_data(root,
-                                                                                             dataset_name,
-                                                                                             num_of_clients,
-                                                                                             split_type,
-                                                                                             min_size,
-                                                                                             class_per_client,
-                                                                                             data_amount,
-                                                                                             iid_fraction,
-                                                                                             user,
-                                                                                             train_test_split,
-                                                                                             quantity_weights,
-                                                                                             alpha)
+    (
+        train_data,
+        test_data,
+        process_x,
+        process_y,
+        transform_train,
+        transform_test,
+    ) = load_data(
+        root,
+        dataset_name,
+        num_of_clients,
+        split_type,
+        min_size,
+        class_per_client,
+        data_amount,
+        iid_fraction,
+        user,
+        train_test_split,
+        quantity_weights,
+        alpha,
+    )
 
     # CIFAR datasets are simulated.
     test_simulated = True
     if dataset_name == CIFAR10 or dataset_name == CIFAR100:
         test_simulated = False
 
-    train_data = FederatedTensorDataset(train_data,
-                                        simulated=True,
-                                        do_simulate=False,
-                                        process_x=process_x,
-                                        process_y=process_y,
-                                        transform=transform_train)
-    test_data = FederatedTensorDataset(test_data,
-                                       simulated=test_simulated,
-                                       do_simulate=False,
-                                       process_x=process_x,
-                                       process_y=process_y,
-                                       transform=transform_test)
+    train_data = FederatedTensorDataset(
+        train_data,
+        simulated=True,
+        do_simulate=False,
+        process_x=process_x,
+        process_y=process_y,
+        transform=transform_train,
+    )
+    test_data = FederatedTensorDataset(
+        test_data,
+        simulated=test_simulated,
+        do_simulate=False,
+        process_x=process_x,
+        process_y=process_y,
+        transform=transform_test,
+    )
     return train_data, test_data

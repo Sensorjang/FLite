@@ -4,17 +4,22 @@ from torch import nn
 
 from FLite.models.BaseModel import BaseModel
 
+
 class Model(BaseModel):
     def __init__(self, channels=32):
         super(Model, self).__init__()
         self.num_channels = channels
         self.conv1 = nn.Conv2d(3, self.num_channels, 3, stride=1)
         self.conv2 = nn.Conv2d(self.num_channels, self.num_channels * 2, 3, stride=1)
-        self.conv3 = nn.Conv2d(self.num_channels * 2, self.num_channels * 2, 3, stride=1)
+        self.conv3 = nn.Conv2d(
+            self.num_channels * 2, self.num_channels * 2, 3, stride=1
+        )
 
         # 2 fully connected layers to transform the output of the convolution layers to the final output
         self.fc1 = nn.Linear(4 * 4 * self.num_channels * 2, self.num_channels * 2)
-        self.fc2 = nn.Linear(self.num_channels * 2, 100)  # change the output size to 100
+        self.fc2 = nn.Linear(
+            self.num_channels * 2, 100
+        )  # change the output size to 100
 
     def forward(self, s):
         s = self.conv1(s)  # batch_size x num_channels x 32 x 32
@@ -37,4 +42,3 @@ class Model(BaseModel):
         s = self.fc2(s)  # batch_size x 100
 
         return s
-

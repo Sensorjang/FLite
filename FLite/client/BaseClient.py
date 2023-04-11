@@ -24,23 +24,28 @@ def create_argument_parser():
     Returns:
         argparse.ArgumentParser: Parser with client service arguments.
     """
-    parser = argparse.ArgumentParser(description='Federated Client')
-    parser.add_argument('--local-port',
-                        type=int,
-                        default=23000,
-                        help='Listen port of the client')
-    parser.add_argument('--server-addr',
-                        type=str,
-                        default="localhost:22999",
-                        help='Address of server in [IP]:[PORT] format')
-    parser.add_argument('--tracker-addr',
-                        type=str,
-                        default="localhost:12666",
-                        help='Address of tracking service in [IP]:[PORT] format')
-    parser.add_argument('--is-remote',
-                        type=bool,
-                        default=False,
-                        help='Whether start as a remote client.')
+    parser = argparse.ArgumentParser(description="Federated Client")
+    parser.add_argument(
+        "--local-port", type=int, default=23000, help="Listen port of the client"
+    )
+    parser.add_argument(
+        "--server-addr",
+        type=str,
+        default="localhost:22999",
+        help="Address of server in [IP]:[PORT] format",
+    )
+    parser.add_argument(
+        "--tracker-addr",
+        type=str,
+        default="localhost:12666",
+        help="Address of tracking service in [IP]:[PORT] format",
+    )
+    parser.add_argument(
+        "--is-remote",
+        type=bool,
+        default=False,
+        help="Whether start as a remote client.",
+    )
     return parser
 
 
@@ -73,17 +78,20 @@ class BaseClient(object):
         >>>         # Implement customized client training method, which overwrites the default training method.
         >>>         pass
     """
-    def __init__(self,
-                 cid,
-                 conf,
-                 train_data,
-                 test_data,
-                 device,
-                 sleep_time=0,
-                 is_remote=False,
-                 local_port=23000,
-                 server_addr="localhost:22999",
-                 tracker_addr="localhost:12666"):
+
+    def __init__(
+        self,
+        cid,
+        conf,
+        train_data,
+        test_data,
+        device,
+        sleep_time=0,
+        is_remote=False,
+        local_port=23000,
+        server_addr="localhost:22999",
+        tracker_addr="localhost:12666",
+    ):
         self.cid = cid
         self.conf = conf
         self.train_data = train_data
@@ -170,7 +178,9 @@ class BaseClient(object):
         self.conf = conf
         if conf.track:
             reset = not self._is_train
-            self._tracker.set_client_context(conf.task_id, conf.round_id, self.cid, reset_client=reset)
+            self._tracker.set_client_context(
+                conf.task_id, conf.round_id, self.cid, reset_client=reset
+            )
 
         self._is_train = False
 
@@ -230,7 +240,11 @@ class BaseClient(object):
                 batch_loss.append(loss.item())
             current_epoch_loss = sum(batch_loss) / len(batch_loss)
             self.train_loss.append(float(current_epoch_loss))
-            logger.debug("Client {}, local epoch: {}, loss: {}".format(self.cid, i, current_epoch_loss))
+            logger.debug(
+                "Client {}, local epoch: {}, loss: {}".format(
+                    self.cid, i, current_epoch_loss
+                )
+            )
         self.train_time = time.time() - start_time
         logger.debug("Client {}, Train Time: {}".format(self.cid, self.train_time))
 
@@ -258,10 +272,12 @@ class BaseClient(object):
             optimizer = torch.optim.Adam(self.model.parameters(), lr=conf.optimizer.lr)
         else:
             # default using optimizer SGD
-            optimizer = torch.optim.SGD(self.model.parameters(),
-                                        lr=conf.optimizer.lr,
-                                        momentum=conf.optimizer.momentum,
-                                        weight_decay=conf.optimizer.weight_decay)
+            optimizer = torch.optim.SGD(
+                self.model.parameters(),
+                lr=conf.optimizer.lr,
+                momentum=conf.optimizer.momentum,
+                weight_decay=conf.optimizer.weight_decay,
+            )
         return optimizer
 
     def load_loader(self, conf):
@@ -272,7 +288,9 @@ class BaseClient(object):
         Returns:
             torch.utils.data.DataLoader: Data loader.
         """
-        return self.train_data.loader(conf.batch_size, self.cid, shuffle=True, seed=conf.seed)
+        return self.train_data.loader(
+            conf.batch_size, self.cid, shuffle=True, seed=conf.seed
+        )
 
     def test_local(self):
         """Test client local model after training."""
@@ -294,7 +312,9 @@ class BaseClient(object):
         self.model.to(device)
         loss_fn = self.load_loss_fn(conf)
         if self.test_loader is None:
-            self.test_loader = self.test_data.loader(conf.test_batch_size, self.cid, shuffle=False, seed=conf.seed)
+            self.test_loader = self.test_data.loader(
+                conf.test_batch_size, self.cid, shuffle=False, seed=conf.seed
+            )
         # TODO: make evaluation metrics a separate package and apply it here.
         self.test_loss = 0
         correct = 0
@@ -311,8 +331,11 @@ class BaseClient(object):
             self.test_loss /= test_size
             self.test_accuracy = 100.0 * float(correct) / test_size
 
-        logger.debug('Client {}, testing -- Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)'.format(
-            self.cid, self.test_loss, correct, test_size, self.test_accuracy))
+        logger.debug(
+            "Client {}, testing -- Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)".format(
+                self.cid, self.test_loss, correct, test_size, self.test_accuracy
+            )
+        )
 
         self.test_time = time.time() - begin_test_time
         self.model = self.model.cpu()
@@ -355,7 +378,9 @@ class BaseClient(object):
         Returns:
             :obj:`UploadRequest`: The upload request defined in protobuf to unify local and remote operations.
         """
-        data = codec.marshal(server_pb.Performance(accuracy=self.test_accuracy, loss=self.test_loss))
+        data = codec.marshal(
+            server_pb.Performance(accuracy=self.test_accuracy, loss=self.test_loss)
+        )
         typ = common_pb.DATA_TYPE_PERFORMANCE
         try:
             if self._is_train:
@@ -368,7 +393,11 @@ class BaseClient(object):
             # When the datasize cannot be get from dataset, default to use equal aggregate
             data_size = 1
 
-        m = self._tracker.get_client_metric().to_proto() if self._tracker else common_pb.ClientMetric()
+        m = (
+            self._tracker.get_client_metric().to_proto()
+            if self._tracker
+            else common_pb.ClientMetric()
+        )
         return server_pb.UploadRequest(
             task_id=self.conf.task_id,
             round_id=self.conf.round_id,
@@ -400,20 +429,30 @@ class BaseClient(object):
         if resp.status.code == common_pb.SC_OK:
             logger.info("Uploaded remotely to the server successfully\n")
         else:
-            logger.error("Failed to upload, code: {}, message: {}\n".format(resp.status.code, resp.status.message))
+            logger.error(
+                "Failed to upload, code: {}, message: {}\n".format(
+                    resp.status.code, resp.status.message
+                )
+            )
 
     # Functions for remote services.
 
     def start_service(self):
         """Start client service."""
         if self.is_remote:
-            grpc_wrapper.start_service(grpc_wrapper.TYPE_CLIENT, ClientService(self), self.local_port)
+            grpc_wrapper.start_service(
+                grpc_wrapper.TYPE_CLIENT, ClientService(self), self.local_port
+            )
 
     def connect_to_server(self):
         """Establish connection between the client and the server."""
         if self.is_remote and self._server_stub is None:
-            self._server_stub = grpc_wrapper.init_stub(grpc_wrapper.TYPE_SERVER, self._server_addr)
-            logger.info("Successfully connected to gRPC server {}".format(self._server_addr))
+            self._server_stub = grpc_wrapper.init_stub(
+                grpc_wrapper.TYPE_SERVER, self._server_addr
+            )
+            logger.info(
+                "Successfully connected to gRPC server {}".format(self._server_addr)
+            )
 
     def operate(self, model, conf, index, is_train=True):
         """A wrapper over operations (training/testing) on clients.

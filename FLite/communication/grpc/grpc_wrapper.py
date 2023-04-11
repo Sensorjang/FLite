@@ -26,8 +26,8 @@ def init_stub(typ, address):
     channel = grpc.insecure_channel(
         address,
         options=[
-            ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
-            ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
+            ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ],
     )
     if typ == TYPE_CLIENT:
@@ -50,8 +50,8 @@ def start_service(typ, service, port):
     server = grpc.server(
         futures.ThreadPoolExecutor(max_workers=10),
         options=[
-            ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
-            ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
+            ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
         ],
     )
     if typ == TYPE_CLIENT:
@@ -60,7 +60,7 @@ def start_service(typ, service, port):
         tracking_grpc.add_TrackingServiceServicer_to_server(service, server)
     else:
         server_grpc.add_ServerServiceServicer_to_server(service, server)
-    server.add_insecure_port('[::]:{}'.format(port))
+    server.add_insecure_port("[::]:{}".format(port))
     server.start()
     server.wait_for_termination()
 

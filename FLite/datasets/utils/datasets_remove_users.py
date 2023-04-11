@@ -40,7 +40,7 @@ def remove(setting_folder, dataset, min_samples):
             if "hierarchies" in data:
                 curr_hierarchy = data["hierarchies"][i]
             curr_num_samples = data["num_samples"][i]
-            if (curr_num_samples >= min_samples):
+            if curr_num_samples >= min_samples:
                 user_data[curr_user] = data["user_data"][curr_user]
                 users.append(curr_user)
                 if curr_hierarchy is not None:

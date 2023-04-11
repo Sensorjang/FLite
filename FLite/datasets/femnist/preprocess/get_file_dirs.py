@@ -13,6 +13,7 @@ the directories written into the files are of the form 'raw_data/...'
 import os
 from FLite.datasets.utils import save_load_util as util
 
+
 def get_file_dir(base_folder):
     class_files = []  # (class, file directory)
     write_files = []  # (writer, file directory)
@@ -62,8 +63,8 @@ def get_file_dir(base_folder):
                     write_files.append((writer, image_dir))
 
     util.save_obj(
-        class_files,
-        os.path.join(base_folder, "intermediate", "class_file_dirs"))
+        class_files, os.path.join(base_folder, "intermediate", "class_file_dirs")
+    )
     util.save_obj(
-        write_files,
-        os.path.join(base_folder, "intermediate", "write_file_dirs"))
+        write_files, os.path.join(base_folder, "intermediate", "write_file_dirs")
+    )

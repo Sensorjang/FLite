@@ -1,4 +1,5 @@
 import threading
+
 try:
     import queue
 except ImportError:
@@ -109,19 +110,20 @@ class MockEtcd(object):
         with self._lock:
             for key in self._event_notifier:
                 self._event_notifier[key] = [
-                        en for en in self._event_notifier[key] if
-                        en.get_client_belongto() == clnt
-                    ]
+                    en
+                    for en in self._event_notifier[key]
+                    if en.get_client_belongto() == clnt
+                ]
 
-    def get_prefix(self, prefix, sort_order='ascend'):
+    def get_prefix(self, prefix, sort_order="ascend"):
         kvs = []
         with self._lock:
             for key, value in self._data.items():
                 if key.startswith(prefix):
                     kvs.append((value.encode(), MockEtcd.KV(key, None)))
-            if sort_order == 'descend':
+            if sort_order == "descend":
                 kvs = sorted(kvs, key=lambda kv: kv[1].key, reverse=True)
-            elif sort_order == 'ascend':
+            elif sort_order == "ascend":
                 kvs = sorted(kvs, key=lambda kv: kv[1].key, reverse=False)
             return kvs
 
@@ -139,7 +141,7 @@ class MockEtcdClient(object):
     MOCK_ETCD_POOL = {}
 
     def __init__(self, host, port):
-        key = '{}:{}'.format(host, port)
+        key = "{}:{}".format(host, port)
         with self.POOL_LOCK:
             if key not in self.MOCK_ETCD_POOL:
                 self.MOCK_ETCD_POOL[key] = MockEtcd()

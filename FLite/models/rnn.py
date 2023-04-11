@@ -14,7 +14,9 @@ def repackage_hidden(h):
 
 
 class Model(BaseModel):
-    def __init__(self, embedding_dim=8, voc_size=80, lstm_unit=256, batch_first=True, n_layers=2):
+    def __init__(
+        self, embedding_dim=8, voc_size=80, lstm_unit=256, batch_first=True, n_layers=2
+    ):
         super(Model, self).__init__()
         self.encoder = nn.Embedding(voc_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, lstm_unit, n_layers, batch_first=batch_first)

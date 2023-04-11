@@ -7,7 +7,10 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 from torchvision.datasets.folder import make_dataset
 
-from FLite.datasets.utils.image_datasets_preprocess import TransformDataset, ImageDataset
+from FLite.datasets.utils.image_datasets_preprocess import (
+    TransformDataset,
+    ImageDataset,
+)
 from FLite.datasets.utils.splitdata_simulation import data_simulation, SIMULATE_IID
 
 logger = logging.getLogger(__name__)
@@ -15,7 +18,17 @@ logger = logging.getLogger(__name__)
 TEST_IN_SERVER = "test_in_server"
 TEST_IN_CLIENT = "test_in_client"
 
-IMG_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm', '.tif', '.tiff', '.webp')
+IMG_EXTENSIONS = (
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".ppm",
+    ".bmp",
+    ".pgm",
+    ".tif",
+    ".tiff",
+    ".webp",
+)
 
 DEFAULT_MERGED_ID = "Merged"
 
@@ -82,20 +95,22 @@ class FederatedTensorDataset(FederatedDataset):
         class_per_client (int, optional): The number of classes in each client, only for non-iid by class simulation.
     """
 
-    def __init__(self,
-                 data,
-                 transform=None,
-                 target_transform=None,
-                 process_x=default_process_x,
-                 process_y=default_process_x,
-                 simulated=False,
-                 do_simulate=True,
-                 num_of_clients=10,
-                 simulation_method=SIMULATE_IID,
-                 weights=None,
-                 alpha=0.5,
-                 min_size=10,
-                 class_per_client=1):
+    def __init__(
+        self,
+        data,
+        transform=None,
+        target_transform=None,
+        process_x=default_process_x,
+        process_y=default_process_x,
+        simulated=False,
+        do_simulate=True,
+        num_of_clients=10,
+        simulation_method=SIMULATE_IID,
+        weights=None,
+        alpha=0.5,
+        min_size=10,
+        class_per_client=1,
+    ):
         super(FederatedTensorDataset, self).__init__()
         self.simulated = simulated
         self.data = data
@@ -110,24 +125,50 @@ class FederatedTensorDataset(FederatedDataset):
         elif do_simulate:
             # For simulation method provided, we support testing in server for now
             # TODO: support simulation for test data => test in clients
-            self.simulation(num_of_clients, simulation_method, weights, alpha, min_size, class_per_client)
+            self.simulation(
+                num_of_clients,
+                simulation_method,
+                weights,
+                alpha,
+                min_size,
+                class_per_client,
+            )
 
-    def simulation(self, num_of_clients, niid=SIMULATE_IID, weights=None, alpha=0.5, min_size=10, class_per_client=1):
+    def simulation(
+        self,
+        num_of_clients,
+        niid=SIMULATE_IID,
+        weights=None,
+        alpha=0.5,
+        min_size=10,
+        class_per_client=1,
+    ):
         if self.simulated:
-            logger.warning("The dataset is already simulated, the simulation would not proceed.")
+            logger.warning(
+                "The dataset is already simulated, the simulation would not proceed."
+            )
             return
         self._users, self.data = data_simulation(
-            self.data['x'],
-            self.data['y'],
+            self.data["x"],
+            self.data["y"],
             num_of_clients,
             niid,
             weights,
             alpha,
             min_size,
-            class_per_client)
+            class_per_client,
+        )
         self.simulated = True
 
-    def loader(self, batch_size, client_id=None, shuffle=True, seed=0, transform=None, drop_last=False):
+    def loader(
+        self,
+        batch_size,
+        client_id=None,
+        shuffle=True,
+        seed=0,
+        transform=None,
+        drop_last=False,
+    ):
         """Get dataset loader.
 
         Args:
@@ -147,8 +188,8 @@ class FederatedTensorDataset(FederatedDataset):
         else:
             data = self.data[client_id]
 
-        data_x = data['x']
-        data_y = data['y']
+        data_x = data["x"]
+        data_y = data["y"]
 
         data_x = np.array(data_x)
         data_y = np.array(data_y)
@@ -164,16 +205,14 @@ class FederatedTensorDataset(FederatedDataset):
 
         transform = self.transform if transform is None else transform
         if transform is not None:
-            dataset = TransformDataset(data_x,
-                                       data_y,
-                                       transform_x=transform,
-                                       transform_y=self.target_transform)
+            dataset = TransformDataset(
+                data_x, data_y, transform_x=transform, transform_y=self.target_transform
+            )
         else:
             dataset = TensorDataset(data_x, data_y)
-        loader = DataLoader(dataset=dataset,
-                            batch_size=batch_size,
-                            shuffle=shuffle,
-                            drop_last=drop_last)
+        loader = DataLoader(
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last
+        )
         return loader
 
     @property
@@ -186,15 +225,15 @@ class FederatedTensorDataset(FederatedDataset):
 
     def size(self, cid=None):
         if cid is not None:
-            return len(self.data[cid]['y'])
+            return len(self.data[cid]["y"])
         else:
-            return len(self.data['y'])
+            return len(self.data["y"])
 
     def total_size(self):
-        if 'y' in self.data:
-            return len(self.data['y'])
+        if "y" in self.data:
+            return len(self.data["y"])
         else:
-            return sum([len(self.data[i]['y']) for i in self.data])
+            return sum([len(self.data[i]["y"]) for i in self.data])
 
     def _input_process(self, sample):
         if self.process_x is not None:
@@ -209,9 +248,9 @@ class FederatedTensorDataset(FederatedDataset):
     def _validate_data(self, data):
         if self.simulated:
             for i in data:
-                assert len(data[i]['x']) == len(data[i]['y'])
+                assert len(data[i]["x"]) == len(data[i]["y"])
         else:
-            assert len(data['x']) == len(data['y'])
+            assert len(data["x"]) == len(data["y"])
 
 
 class FederatedImageDataset(FederatedDataset):
@@ -244,21 +283,23 @@ class FederatedImageDataset(FederatedDataset):
             The client ids are ["f0000001", "f00000002", ...] if not specified.
     """
 
-    def __init__(self,
-                 root,
-                 simulated,
-                 do_simulate=True,
-                 extensions=IMG_EXTENSIONS,
-                 is_valid_file=None,
-                 transform=None,
-                 target_transform=None,
-                 client_ids="default",
-                 num_of_clients=10,
-                 simulation_method=SIMULATE_IID,
-                 weights=None,
-                 alpha=0.5,
-                 min_size=10,
-                 class_per_client=1):
+    def __init__(
+        self,
+        root,
+        simulated,
+        do_simulate=True,
+        extensions=IMG_EXTENSIONS,
+        is_valid_file=None,
+        transform=None,
+        target_transform=None,
+        client_ids="default",
+        num_of_clients=10,
+        simulation_method=SIMULATE_IID,
+        weights=None,
+        alpha=0.5,
+        min_size=10,
+        class_per_client=1,
+    ):
         super(FederatedImageDataset, self).__init__()
         self.simulated = simulated
         self.transform = transform
@@ -277,16 +318,23 @@ class FederatedImageDataset(FederatedDataset):
             for i in range(self.num_of_clients):
                 current_client_id = self.users[i]
                 classes, class_to_idx = self._find_classes(self.roots[i])
-                samples = make_dataset(self.roots[i], class_to_idx, extensions, is_valid_file)
+                samples = make_dataset(
+                    self.roots[i], class_to_idx, extensions, is_valid_file
+                )
                 if len(samples) == 0:
                     msg = "Found 0 files in subfolders of: {}\n".format(self.root)
                     if extensions is not None:
-                        msg += "Supported extensions are: {}".format(",".join(extensions))
+                        msg += "Supported extensions are: {}".format(
+                            ",".join(extensions)
+                        )
                     raise RuntimeError(msg)
 
                 self.classes[current_client_id] = classes
                 self.class_to_idx[current_client_id] = class_to_idx
-                temp_client = {'x': [i[0] for i in samples], 'y': [i[1] for i in samples]}
+                temp_client = {
+                    "x": [i[0] for i in samples],
+                    "y": [i[1] for i in samples],
+                }
                 self.data[current_client_id] = temp_client
         elif do_simulate:
             self.root = root
@@ -303,23 +351,50 @@ class FederatedImageDataset(FederatedDataset):
             self.samples = samples
             self.inputs = [i[0] for i in self.samples]
             self.labels = [i[1] for i in self.samples]
-            self.simulation(num_of_clients, simulation_method, weights, alpha, min_size, class_per_client)
+            self.simulation(
+                num_of_clients,
+                simulation_method,
+                weights,
+                alpha,
+                min_size,
+                class_per_client,
+            )
 
-    def simulation(self, num_of_clients, niid="iid", weights=[1], alpha=0.5, min_size=10, class_per_client=1):
+    def simulation(
+        self,
+        num_of_clients,
+        niid="iid",
+        weights=[1],
+        alpha=0.5,
+        min_size=10,
+        class_per_client=1,
+    ):
         if self.simulated:
-            logger.warning("The dataset is already simulated, the simulation would not proceed.")
+            logger.warning(
+                "The dataset is already simulated, the simulation would not proceed."
+            )
             return
-        self.users, self.data = data_simulation(self.inputs,
-                                                self.labels,
-                                                num_of_clients,
-                                                niid,
-                                                weights,
-                                                alpha,
-                                                min_size,
-                                                class_per_client)
+        self.users, self.data = data_simulation(
+            self.inputs,
+            self.labels,
+            num_of_clients,
+            niid,
+            weights,
+            alpha,
+            min_size,
+            class_per_client,
+        )
         self.simulated = True
 
-    def loader(self, batch_size, client_id=None, shuffle=True, seed=0, num_workers=2, transform=None):
+    def loader(
+        self,
+        batch_size,
+        client_id=None,
+        shuffle=True,
+        seed=0,
+        num_workers=2,
+        transform=None,
+    ):
         """Get dataset loader.
 
         Args:
@@ -338,8 +413,8 @@ class FederatedImageDataset(FederatedDataset):
             data = self.data
         else:
             data = self.data[client_id]
-        data_x = data['x'][:]
-        data_y = data['y'][:]
+        data_x = data["x"][:]
+        data_y = data["y"][:]
 
         # randomly shuffle data
         if shuffle:
@@ -351,11 +426,13 @@ class FederatedImageDataset(FederatedDataset):
 
         transform = self.transform if transform is None else transform
         dataset = ImageDataset(data_x, data_y, transform, self.target_transform)
-        loader = torch.utils.data.DataLoader(dataset,
-                                             batch_size=batch_size,
-                                             shuffle=shuffle,
-                                             num_workers=num_workers,
-                                             pin_memory=False)
+        loader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=num_workers,
+            pin_memory=False,
+        )
         return loader
 
     @property
@@ -368,9 +445,9 @@ class FederatedImageDataset(FederatedDataset):
 
     def size(self, cid=None):
         if cid is not None:
-            return len(self.data[cid]['y'])
+            return len(self.data[cid]["y"])
         else:
-            return len(self.data['y'])
+            return len(self.data["y"])
 
     def _find_classes(self, dir):
         """Get the classes of the dataset.
@@ -402,14 +479,27 @@ class FederatedTorchDataset(FederatedDataset):
         self.data = data
         self._users = users
 
-    def loader(self, batch_size, client_id=None, shuffle=True, seed=0, num_workers=2, transform=None):
+    def loader(
+        self,
+        batch_size,
+        client_id=None,
+        shuffle=True,
+        seed=0,
+        num_workers=2,
+        transform=None,
+    ):
         if client_id is None:
             data = self.data
         else:
             data = self.data[client_id]
 
         loader = torch.utils.data.DataLoader(
-            data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=True)
+            data,
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
         return loader
 
     @property

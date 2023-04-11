@@ -11,7 +11,9 @@ class Model(BaseModel):
         self.num_channels = channels
         self.conv1 = nn.Conv2d(3, self.num_channels, 3, stride=1)
         self.conv2 = nn.Conv2d(self.num_channels, self.num_channels * 2, 3, stride=1)
-        self.conv3 = nn.Conv2d(self.num_channels * 2, self.num_channels * 2, 3, stride=1)
+        self.conv3 = nn.Conv2d(
+            self.num_channels * 2, self.num_channels * 2, 3, stride=1
+        )
 
         # 2 fully connected layers to transform the output of the convolution layers to the final output
         self.fc1 = nn.Linear(4 * 4 * self.num_channels * 2, self.num_channels * 2)

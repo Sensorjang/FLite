@@ -8,7 +8,9 @@ from FLite.datasets.utils.splitdata_simulation import equal_division
 logger = logging.getLogger(__name__)
 
 SIMULATE_ISO = "iso"  # isometric sleep time distribution among selected clients
-SIMULATE_DIR = "dir"  # use symmetric dirichlet process to sample sleep time heterogenous
+SIMULATE_DIR = (
+    "dir"  # use symmetric dirichlet process to sample sleep time heterogenous
+)
 SIMULATE_REAL = "real"  # use real speed ratio of main stream smartphones to simulate sleep time heterogenous
 
 
@@ -26,7 +28,9 @@ def sample_real_ratio(num_values):
     return np.array([value_pool[i] for i in idxs]).astype(float)
 
 
-def resource_hetero_simulation(fraction, hetero_type, sleep_group_num, level, total_time, num_clients):
+def resource_hetero_simulation(
+    fraction, hetero_type, sleep_group_num, level, total_time, num_clients
+):
     """Simulated resource heterogeneous by add sleeping time to clients.
 
     Args:
@@ -44,8 +48,12 @@ def resource_hetero_simulation(fraction, hetero_type, sleep_group_num, level, to
     unsleep_clients = [0] * (num_clients - sleep_clients)
     sleep_group_num = sleep_group_num
     if sleep_group_num > sleep_clients:
-        logger.warning("sleep_group_num {} is more than sleep_clients number {}, \
-        so we set sleep_group_num to sleep_clients".format(sleep_group_num, sleep_clients))
+        logger.warning(
+            "sleep_group_num {} is more than sleep_clients number {}, \
+        so we set sleep_group_num to sleep_clients".format(
+                sleep_group_num, sleep_clients
+            )
+        )
         sleep_group_num = sleep_clients
     groups, _ = equal_division(sleep_group_num, np.arange(sleep_clients))
     if level == 0:

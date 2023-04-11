@@ -22,38 +22,42 @@ class Femnist(BaseDataset):
         write_url (str): The url to get the by_write split FEMNIST.
     """
 
-    def __init__(self,
-                 root,
-                 fraction,
-                 split_type,
-                 user,
-                 iid_user_fraction=0.1,
-                 train_test_split=0.9,
-                 minsample=10,
-                 num_class=62,
-                 num_of_client=100,
-                 class_per_client=2,
-                 setting_folder=None,
-                 seed=-1,
-                 **kwargs):
-        super(Femnist, self).__init__(root,
-                                      "femnist",
-                                      fraction,
-                                      split_type,
-                                      user,
-                                      iid_user_fraction,
-                                      train_test_split,
-                                      minsample,
-                                      num_class,
-                                      num_of_client,
-                                      class_per_client,
-                                      setting_folder,
-                                      seed)
+    def __init__(
+        self,
+        root,
+        fraction,
+        split_type,
+        user,
+        iid_user_fraction=0.1,
+        train_test_split=0.9,
+        minsample=10,
+        num_class=62,
+        num_of_client=100,
+        class_per_client=2,
+        setting_folder=None,
+        seed=-1,
+        **kwargs
+    ):
+        super(Femnist, self).__init__(
+            root,
+            "femnist",
+            fraction,
+            split_type,
+            user,
+            iid_user_fraction,
+            train_test_split,
+            minsample,
+            num_class,
+            num_of_client,
+            class_per_client,
+            setting_folder,
+            seed,
+        )
         self.class_url = "https://s3.amazonaws.com/nist-srd/SD19/by_class.zip"
         self.write_url = "https://s3.amazonaws.com/nist-srd/SD19/by_write.zip"
         self.packaged_data_files = {
             "femnist_niid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/oyhegd3c0pxa0tl/femnist_niid_100_10_1_0.05_0.1_sample_0.9.zip",
-            "femnist_iid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/jcg0xrz5qrri4tv/femnist_iid_100_10_1_0.05_0.1_sample_0.9.zip"
+            "femnist_iid_100_10_1_0.05_0.1_sample_0.9.zip": "https://dl.dropboxusercontent.com/s/jcg0xrz5qrri4tv/femnist_iid_100_10_1_0.05_0.1_sample_0.9.zip",
         }
         # Google Drive ids
         # self.packaged_data_files = {

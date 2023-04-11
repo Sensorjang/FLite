@@ -4,7 +4,7 @@ import math
 from FLite.models.BaseModel import BaseModel
 
 cfg = {
-    'VGG9': [32, 64, 'M', 128, 128, 'M', 256, 256, 'M'],
+    "VGG9": [32, 64, "M", 128, 128, "M", 256, 256, "M"],
 }
 
 
@@ -12,7 +12,7 @@ def make_layers(cfg, batch_norm):
     layers = []
     in_channels = 3
     for v in cfg:
-        if v == 'M':
+        if v == "M":
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
@@ -26,7 +26,9 @@ def make_layers(cfg, batch_norm):
 
 
 class Model(BaseModel):
-    def __init__(self, features=make_layers(cfg['VGG9'], batch_norm=False), num_classes=10):
+    def __init__(
+        self, features=make_layers(cfg["VGG9"], batch_norm=False), num_classes=10
+    ):
         super(Model, self).__init__()
         self.features = features
         self.classifier = nn.Sequential(
@@ -50,7 +52,7 @@ class Model(BaseModel):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                m.weight.data.normal_(0, math.sqrt(2. / n))
+                m.weight.data.normal_(0, math.sqrt(2.0 / n))
                 if m.bias is not None:
                     m.bias.data.zero_()
             elif isinstance(m, nn.BatchNorm2d):
@@ -61,5 +63,5 @@ class Model(BaseModel):
 
 
 def VGG9(batch_norm=False, **kwargs):
-    model = Model(make_layers(cfg['VGG9'], batch_norm), **kwargs)
+    model = Model(make_layers(cfg["VGG9"], batch_norm), **kwargs)
     return model

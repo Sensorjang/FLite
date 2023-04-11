@@ -26,8 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 class Coordinator(object):
-
-
     def __init__(self):
         self.registered_model = False
         self.registered_dataset = False
@@ -89,32 +87,37 @@ class Coordinator(object):
             conf (omegaconf.dictconfig.DictConfig): Configurations.
         """
         self.conf = conf
-        self.conf.is_distributed = (self.conf.gpu > 1)
+        self.conf.is_distributed = self.conf.gpu > 1
         if self.conf.gpu == 0:
             self.conf.device = "cpu"
         elif self.conf.gpu == 1:
             self.conf.device = "cuda"
         else:
-            self.conf.device = get_device(self.conf.gpu, self.conf.distributed.world_size,
-                                          self.conf.distributed.local_rank)
+            self.conf.device = get_device(
+                self.conf.gpu,
+                self.conf.distributed.world_size,
+                self.conf.distributed.local_rank,
+            )
         self.print_("Configurations: {}".format(self.conf))
 
     def init_dataset(self):
         """Initialize datasets. Use provided datasets if not registered."""
         if self.registered_dataset:
             return
-        self.train_data, self.test_data = construct_datasets(self.conf.data.root,
-                                                             self.conf.data.dataset,
-                                                             self.conf.data.num_of_clients,
-                                                             self.conf.data.split_type,
-                                                             self.conf.data.min_size,
-                                                             self.conf.data.class_per_client,
-                                                             self.conf.data.data_amount,
-                                                             self.conf.data.iid_fraction,
-                                                             self.conf.data.user,
-                                                             self.conf.data.train_test_split,
-                                                             self.conf.data.weights,
-                                                             self.conf.data.alpha)
+        self.train_data, self.test_data = construct_datasets(
+            self.conf.data.root,
+            self.conf.data.dataset,
+            self.conf.data.num_of_clients,
+            self.conf.data.split_type,
+            self.conf.data.min_size,
+            self.conf.data.class_per_client,
+            self.conf.data.data_amount,
+            self.conf.data.iid_fraction,
+            self.conf.data.user,
+            self.conf.data.train_test_split,
+            self.conf.data.weights,
+            self.conf.data.alpha,
+        )
 
         self.print_(f"Total training data amount: {self.train_data.total_size()}")
         self.print_(f"Total testing data amount: {self.test_data.total_size()}")
@@ -133,10 +136,7 @@ class Coordinator(object):
         if not self.registered_server:
             self._server_class = BaseServer
 
-        kwargs = {
-            "is_remote": self.conf.is_remote,
-            "local_port": self.conf.local_port
-        }
+        kwargs = {"is_remote": self.conf.is_remote, "local_port": self.conf.local_port}
 
         if self.conf.test_mode == TEST_IN_SERVER:
             kwargs["test_data"] = self.test_data
@@ -153,24 +153,30 @@ class Coordinator(object):
         # Enforce system heterogeneity of clients.
         sleep_time = [0 for _ in self.train_data.users]
         if self.conf.resource_heterogeneous.simulate:
-            sleep_time = resource_hetero_simulation(self.conf.resource_heterogeneous.fraction,
-                                                    self.conf.resource_heterogeneous.hetero_type,
-                                                    self.conf.resource_heterogeneous.sleep_group_num,
-                                                    self.conf.resource_heterogeneous.level,
-                                                    self.conf.resource_heterogeneous.total_time,
-                                                    len(self.train_data.users))
+            sleep_time = resource_hetero_simulation(
+                self.conf.resource_heterogeneous.fraction,
+                self.conf.resource_heterogeneous.hetero_type,
+                self.conf.resource_heterogeneous.sleep_group_num,
+                self.conf.resource_heterogeneous.level,
+                self.conf.resource_heterogeneous.total_time,
+                len(self.train_data.users),
+            )
 
         client_test_data = self.test_data
         if self.conf.test_mode == TEST_IN_SERVER:
             client_test_data = None
 
-        self.clients = [self._client_class(u,
-                                           self.conf.client,
-                                           self.train_data,
-                                           client_test_data,
-                                           self.conf.device,
-                                           **{"sleep_time": sleep_time[i]})
-                        for i, u in enumerate(self.train_data.users)]
+        self.clients = [
+            self._client_class(
+                u,
+                self.conf.client,
+                self.train_data,
+                client_test_data,
+                self.conf.device,
+                **{"sleep_time": sleep_time[i]},
+            )
+            for i, u in enumerate(self.train_data.users)
+        ]
 
         self.print_("Clients in total: {}".format(len(self.clients)))
 
@@ -189,15 +195,17 @@ class Coordinator(object):
         else:
             user = random.choice(self.train_data.users)
 
-        return self._client_class(user,
-                                  self.conf.client,
-                                  self.train_data,
-                                  self.test_data,
-                                  self.conf.device,
-                                  is_remote=self.conf.is_remote,
-                                  local_port=self.conf.local_port,
-                                  server_addr=self.conf.server_addr,
-                                  tracker_addr=self.conf.tracker_addr)
+        return self._client_class(
+            user,
+            self.conf.client,
+            self.train_data,
+            self.test_data,
+            self.conf.device,
+            is_remote=self.conf.is_remote,
+            local_port=self.conf.local_port,
+            server_addr=self.conf.server_addr,
+            tracker_addr=self.conf.tracker_addr,
+        )
 
     def start_server(self, args):
         """Start a server service for remote training.
@@ -323,7 +331,7 @@ def init_conf(conf=None):
         omegaconf.dictconfig.DictConfig: Internal configurations managed by OmegaConf.
     """
     here = path.abspath(path.dirname(__file__))
-    config_file = path.join(here, 'config.yaml')
+    config_file = path.join(here, "config.yaml")
     return load_config(config_file, conf)
 
 
@@ -349,7 +357,9 @@ def init_logger(log_level):
     Args:
         log_level (int): Logger level, e.g., logging.INFO, logging.DEBUG
     """
-    log_formatter = logging.Formatter("%(asctime)s [%(threadName)s] [%(levelname)-5.5s]  %(message)s")
+    log_formatter = logging.Formatter(
+        "%(asctime)s [%(threadName)s] [%(levelname)-5.5s]  %(message)s"
+    )
     root_logger = logging.getLogger()
 
     log_level = logging.INFO if not log_level else log_level
@@ -358,7 +368,9 @@ def init_logger(log_level):
     file_path = os.path.join(os.getcwd(), "logs")
     if not os.path.exists(file_path):
         os.makedirs(file_path)
-    file_path = path.join(file_path, "train" + time.strftime(".%m_%d_%H_%M_%S") + ".log")
+    file_path = path.join(
+        file_path, "train" + time.strftime(".%m_%d_%H_%M_%S") + ".log"
+    )
     file_handler = logging.FileHandler(file_path)
     file_handler.setFormatter(log_formatter)
     root_logger.addHandler(file_handler)

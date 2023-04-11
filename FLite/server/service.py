@@ -1,7 +1,11 @@
 import logging
 import threading
 
-from FLite.protobuf import server_service_pb2_grpc as server_grpc, server_service_pb2 as server_pb, common_pb2 as common_pb
+from FLite.protobuf import (
+    server_service_pb2_grpc as server_grpc,
+    server_service_pb2 as server_pb,
+    common_pb2 as common_pb,
+)
 from FLite.protocol import codec
 from FLite.tracking import metric
 
@@ -9,11 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 class ServerService(server_grpc.ServerServiceServicer):
-    """"Remote gRPC server service.
+    """ "Remote gRPC server service.
 
     Args:
         server (:obj:`BaseServer`): Federated learning server instance.
     """
+
     def __init__(self, server):
         self._base = server
 
@@ -86,8 +91,10 @@ class ServerService(server_grpc.ServerServiceServicer):
         if num_of_clients < clients_per_round:
             # TODO: use a more appropriate way to handle this situation
             logger.warning(
-                "Available number of clients {} is smaller than clients per round {}".format(num_of_clients,
-                                                                                             clients_per_round))
+                "Available number of clients {} is smaller than clients per round {}".format(
+                    num_of_clients, clients_per_round
+                )
+            )
             self._clients_per_round = num_of_clients
         else:
             self._clients_per_round = clients_per_round
@@ -114,9 +121,15 @@ class ServerService(server_grpc.ServerServiceServicer):
         self._trigger_aggregate_test()
 
     def _trigger_aggregate_train(self):
-        logger.info("train_client_count: {}/{}".format(self._train_client_count, self._clients_per_round))
+        logger.info(
+            "train_client_count: {}/{}".format(
+                self._train_client_count, self._clients_per_round
+            )
+        )
         if self._train_client_count == self._clients_per_round:
-            self._base.set_client_uploads_train(self._uploaded_models, self._uploaded_weights, self._uploaded_metrics)
+            self._base.set_client_uploads_train(
+                self._uploaded_models, self._uploaded_weights, self._uploaded_metrics
+            )
             self._train_client_count = 0
             self._reset_train_cache()
             with self._base.condition():
@@ -125,7 +138,9 @@ class ServerService(server_grpc.ServerServiceServicer):
     def _trigger_aggregate_test(self):
         # TODO: determine the testing clients not only by the selected number of clients
         if self._test_client_count == self._clients_per_round:
-            self._base.set_client_uploads_test(self._accuracies, self._losses, self._test_sizes, self._uploaded_metrics)
+            self._base.set_client_uploads_test(
+                self._accuracies, self._losses, self._test_sizes, self._uploaded_metrics
+            )
             self._test_client_count = 0
             self._reset_test_cache()
             with self._base.condition():
