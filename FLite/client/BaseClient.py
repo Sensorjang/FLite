@@ -63,7 +63,7 @@ class BaseClient(object):
     Override the class and functions to implement customized client.
 
     Example:
-        >>> from FLite.client import BaseClient
+        >>> from FLite.client.BaseClient import BaseClient
         >>> class CustomizedClient(BaseClient):
         >>>     def __init__(self, cid, conf, train_data, test_data, device, **kwargs):
         >>>         super(CustomizedClient, self).__init__(cid, conf, train_data, test_data, device, **kwargs)
