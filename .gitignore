@@ -132,3 +132,6 @@ dmypy.json
 examples/data/
 examples/logs/
 examples/saved_models/
+
+# .idea
+.idea/
