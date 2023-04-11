@@ -1,5 +1,4 @@
 from FLite.registry import etcd_client
-from FLite.registry import k8s
 from FLite.registry.vclient import VirtualClient
 from kubernetes import client, config
 from FLite.registry.vclient import VirtualClient

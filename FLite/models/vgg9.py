@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import math
-from FLite.models import BaseModel
+from FLite.models.BaseModel import BaseModel
 
 cfg = {
     'VGG9': [32, 64, 'M', 128, 128, 'M', 256, 256, 'M'],

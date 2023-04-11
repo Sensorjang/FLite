@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from FLite.models import BaseModel
+from FLite.models.BaseModel import BaseModel
 
 
 class Model(BaseModel):

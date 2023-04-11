@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from FLite.models import BaseModel
+from FLite.models.BaseModel import BaseModel
 
 
 def repackage_hidden(h):
