@@ -129,9 +129,9 @@ dmypy.json
 .pyre/
 
 # examples
-examples/data/
-examples/logs/
-examples/saved_models/
+examples/**/data/
+examples/**/logs/
+examples/**/saved_models/
 
 # .idea
 .idea/
