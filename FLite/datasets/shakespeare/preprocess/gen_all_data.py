@@ -5,7 +5,7 @@ These codes are adopted from LEAF with some modifications.
 import json
 import os
 
-from FLite.datasets.shakespeare.utils.shake_utils import parse_data_in
+from FLite.datasets.shakespeare.preprocess.shake_utils import parse_data_in
 
 
 def generated_all_data(parent_path):

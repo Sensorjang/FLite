@@ -103,7 +103,7 @@ def split_train_test(setting_folder, metafile, name, user, frac, seed):
         seed_fname = os.path.join(metafile, SEED_FILES['split'])
         with open(seed_fname, 'w+') as f:
             f.write("# split_seed used by sampling script - supply as "
-                    "--spltseed to preprocess.sh or --seed to utils/split_data.py\n")
+                    "--spltseed to preprocess.sh or --seed to preprocess/split_data.py\n")
             f.write(str(rng_seed))
         logger.info("- random seed written out to {file}".format(file=seed_fname))
     else:

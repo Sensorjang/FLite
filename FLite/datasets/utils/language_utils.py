@@ -8,7 +8,7 @@ import re
 import numpy as np
 
 # ------------------------
-# utils for shakespeare dataset
+# preprocess for shakespeare dataset
 
 ALL_LETTERS = "\n !\"&'(),-.0123456789:;>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz}"
 NUM_LETTERS = len(ALL_LETTERS)
@@ -43,7 +43,7 @@ def word_to_indices(word):
 
 
 # ------------------------
-# utils for sent140 dataset
+# preprocess for sent140 dataset
 
 
 def split_line(line):

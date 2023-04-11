@@ -47,7 +47,7 @@ def extreme(data_dir, data_folder, metafile, fraction, num_class=62, num_of_clie
         seed_fname = os.path.join(metafile, SEED_FILES['sampling'])
         with open(seed_fname, 'w+') as f:
             f.write("# sampling_seed used by sampling script - supply as "
-                    "--smplseed to preprocess.sh or --seed to utils/sample_collect.py\n")
+                    "--smplseed to preprocess.sh or --seed to preprocess/sample_collect.py\n")
             f.write(str(rng_seed))
         logger.info("- random seed written out to {file}".format(file=seed_fname))
     else:
@@ -137,7 +137,7 @@ def sample(data_dir, data_folder, metafile, fraction, iid, iid_user_fraction=0.0
         seed_fname = os.path.join(metafile, SEED_FILES['sampling'])
         with open(seed_fname, 'w+') as f:
             f.write("# sampling_seed used by sampling script - supply as "
-                    "--smplseed to preprocess.sh or --seed to utils/sample_collect.py\n")
+                    "--smplseed to preprocess.sh or --seed to preprocess/sample_collect.py\n")
             f.write(str(rng_seed))
         logger.info("- random seed written out to {file}".format(file=seed_fname))
     else:

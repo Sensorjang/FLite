@@ -1,8 +1,8 @@
 import logging
 import os
 
-from FLite.datasets.shakespeare.utils.gen_all_data import generated_all_data
-from FLite.datasets.shakespeare.utils.preprocess_shakespeare import shakespeare_preprocess
+from FLite.datasets.shakespeare.preprocess.gen_all_data import generated_all_data
+from FLite.datasets.shakespeare.preprocess.preprocess_shakespeare import shakespeare_preprocess
 from FLite.datasets.BaseDatasets import BaseDataset
 from FLite.datasets.utils.datasets_download import download_url, extract_archive
 
