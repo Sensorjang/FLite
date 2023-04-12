@@ -785,6 +785,8 @@ class BaseServer(object):
     # Functions for remote training
 
     def start_service(self):
+        from FLite.utils.obvious_notice_logger import noticelogger
+        noticelogger.get_instance().green("OK! Server is ready to start service.")
         """Start federated learning server GRPC service."""
         if self.is_remote:
             grpc_wrapper.start_service(

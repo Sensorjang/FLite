@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from omegaconf import OmegaConf
 
+from FLite.utils.obvious_notice_logger import noticelogger
 from FLite.client.BaseClient import BaseClient
 from FLite.datasets import TEST_IN_SERVER
 from FLite.datasets.utils.data_loader import construct_datasets
@@ -388,25 +389,27 @@ def init(conf=None, init_all=True):
         init_all (bool, optional): Whether initialize dataset, model, server, and client other than configuration.
     """
     global _global_coord
-
     config = init_conf(conf)
 
     init_logger(config.tracking.log_level)
 
     _set_random_seed(config.seed)
-
+    noticelogger.get_instance().green("Initializing configure ...")
     _global_coord.init(config, init_all)
-
+    noticelogger.get_instance().green("OK!")
 
 def run():
     """Run federated learning process."""
     global _global_coord
+    noticelogger.get_instance().FLiteTitle()
+    noticelogger.get_instance().green("Starting FLite ...")
     _global_coord.run()
 
 
 def init_dataset():
     """Initialize dataset, either using registered dataset or out-of-the-box datasets set in config."""
     global _global_coord
+
     _global_coord.init_dataset()
 
 
@@ -417,6 +420,7 @@ def init_model():
         nn.Module: Model used in federated learning.
     """
     global _global_coord
+
     _global_coord.init_model()
 
     return _global_coord.model
@@ -430,6 +434,9 @@ def start_server(args=None):
     """
     global _global_coord
 
+    noticelogger.get_instance().FLiteTitle()
+    noticelogger.get_instance().green("Starting FLite Server ...")
+
     _global_coord.start_server(args)
 
 
@@ -441,8 +448,10 @@ def start_client(args=None):
     """
     global _global_coord
 
-    _global_coord.start_client(args)
+    noticelogger.get_instance().FLiteTitle()
+    noticelogger.get_instance().green("Starting FLite Client ...")
 
+    _global_coord.start_client(args)
 
 def get_coordinator():
     """Get the global coordinator instance.

@@ -439,6 +439,8 @@ class BaseClient(object):
 
     def start_service(self):
         """Start client service."""
+        from FLite.utils.obvious_notice_logger import noticelogger
+        noticelogger.get_instance().green("OK! Client is ready to start service.")
         if self.is_remote:
             grpc_wrapper.start_service(
                 grpc_wrapper.TYPE_CLIENT, ClientService(self), self.local_port
