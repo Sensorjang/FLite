@@ -166,7 +166,7 @@ class BaseServer(object):
             self._round_time = time.time()
 
             self._current_round += 1
-            self.print_("\n-------- round {} --------".format(self._current_round))
+            self.print_("\033[1;36m\n-------- round {} --------\033[0m".format(self._current_round))
 
             # Train
             self.pre_train()
@@ -708,7 +708,8 @@ class BaseServer(object):
                 ),
             )
             torch.save(self._model.cpu().state_dict(), save_path)
-            self.print_("Model saved at {}".format(save_path))
+            self.print_("\033[1;36mModel saved at {}\033[0m".format(save_path))
+
 
     def set_client_uploads_train(self, models, weights, metrics=None):
         """Set training updates uploaded from clients.

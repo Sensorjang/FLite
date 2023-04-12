@@ -10,6 +10,16 @@
  |__/      |________/|__/   \___/   \_______/
                                 Version 1.0.0
 </pre>
+<div align="center">
+
+![GitHub](https://img.shields.io/github/license/Sensorjang/FLite)
+![Version](https://img.shields.io/badge/Version-V1.0.0-yellow)
+![Language](https://img.shields.io/badge/Language-Python-blue)
+![Build](https://img.shields.io/badge/Build-passing-lightgreen)
+![Maintained](https://img.shields.io/badge/Maintained-Yes-red)
+
+</div>
+
 
 ##### Graduation Project: Design and Implementation of a Topology Based Distributed Training Federated Learning Experimental Framework. <br/>
 [Software Engineering, School of Computer Science and Technology, WUST, P. Qi(Sensorjang@wust.edu.cn)]<br/>
