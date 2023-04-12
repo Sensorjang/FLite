@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from FLite.communication import grpc_wrapper
+from FLite.communication.grpc import grpc_wrapper
 from FLite.protobuf import common_pb2 as common_pb
 from FLite.protobuf import tracking_service_pb2 as tracking_pb
 from FLite.protobuf import tracking_service_pb2_grpc as tracking_grpc

@@ -1,4 +1,16 @@
 # FLite
+<pre>
+  /$$$$$$$$ /$$       /$$   /$$
+ | $$_____/| $$      |__/  | $$
+ | $$      | $$       /$$ /$$$$$$    /$$$$$$
+ | $$$$$   | $$      | $$|_  $$_/   /$$__  $$
+ | $$__/   | $$      | $$  | $$    | $$$$$$$$
+ | $$      | $$      | $$  | $$ /$$| $$_____/
+ | $$      | $$$$$$$$| $$  |  $$$$/|  $$$$$$$
+ |__/      |________/|__/   \___/   \_______/
+                                Version 1.0.0
+</pre>
+
 ##### Graduation Project: Design and Implementation of a Topology Based Distributed Training Federated Learning Experimental Framework. <br/>
 [Software Engineering, School of Computer Science and Technology, WUST, P. Qi(Sensorjang@wust.edu.cn)]<br/>
 毕业设计：一种基于拓扑结构的分布式训练联邦学习实验框架的设计与实现<br/>
