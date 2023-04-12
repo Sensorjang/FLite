@@ -11,6 +11,7 @@
                                 Version 1.0.0
 </pre>
 <div align="center">
+<h1 align="center">FLite: A Lightweight Federated Learning Framework for Real-World Deployment</h1>
 
 ![GitHub](https://img.shields.io/github/license/Sensorjang/FLite)
 ![Version](https://img.shields.io/badge/Version-V1.0.0-yellow)
