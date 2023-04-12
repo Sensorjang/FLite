@@ -191,7 +191,6 @@ def sample(
             indices = [i for i in range(tot_num_samples)]
             new_indices = rng.sample(indices, num_new_samples)
             users = ["f%07.0f" % (i + new_user_count) for i in range(num_new_users)]
-
             user_data = {}
             for user in users:
                 user_data[user] = {"x": [], "y": []}

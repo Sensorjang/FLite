@@ -228,7 +228,7 @@ class Coordinator(object):
 
         self.server.start_service()
 
-    def start_client(self, args):
+    def start_client(self, dataset, args):
         """Start a client service for remote training.
 
         Client controls training datasets.
@@ -240,6 +240,7 @@ class Coordinator(object):
         if args:
             self.conf = OmegaConf.merge(self.conf, args.__dict__)
 
+        self.conf.data.dataset = dataset
         self.init_dataset()
 
         client = self.init_client()
@@ -440,7 +441,7 @@ def start_server(args=None):
     _global_coord.start_server(args)
 
 
-def start_client(args=None):
+def start_client(dataset="femnist", args=None):
     """Start federated learning client service for remote training.
 
     Args:
@@ -451,7 +452,7 @@ def start_client(args=None):
     noticelogger.get_instance().FLiteTitle()
     noticelogger.get_instance().green("Starting FLite Client ...")
 
-    _global_coord.start_client(args)
+    _global_coord.start_client(dataset, args)
 
 def get_coordinator():
     """Get the global coordinator instance.
