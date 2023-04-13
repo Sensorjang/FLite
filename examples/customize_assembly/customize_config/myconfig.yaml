@@ -1,0 +1,75 @@
+task_id: ""
+data:
+  root: "../../local_simulation/data/"
+  dataset: femnist
+  split_type: "iid"
+
+  min_size: 10
+  data_amount: 0.05
+  iid_fraction: 0.1
+  user: False
+
+  class_per_client: 1
+  num_of_clients: 100
+  train_test_split: 0.9
+  alpha: 0.5
+
+  weights: NULL
+
+model: lenet
+test_mode: "test_in_client"
+test_method: "average"
+
+server:
+  track: False
+  rounds: 10
+  clients_per_round: 5
+  test_every: 1
+  save_model_every: 10
+  save_model_path: ""
+  batch_size: 32
+  test_all: True
+  random_selection: True
+  aggregation_stragtegy: "FedAvg"
+  aggregation_content: "all"
+
+client:
+  track: False
+  batch_size: 32
+  test_batch_size: 5
+  local_epoch: 10
+  optimizer:
+    type: "Adam"
+    lr: 0.001
+    momentum: 0.9
+    weight_decay: 0
+  seed: 0
+  local_test: False
+
+gpu: 0
+distributed:
+  backend: "nccl"
+  init_method: ""
+  world_size: 0
+  rank: 0
+  local_rank: 0
+
+tracking:
+  database: ""
+  log_file: ""
+  log_level: "INFO"
+  metric_file: ""
+  save_every: 1
+
+resource_heterogeneous:
+  simulate: False
+  hetero_type: "real"
+  level: 3
+  sleep_group_num: 1000
+  total_time: 1000
+  fraction: 1
+  grouping_strategy: "greedy"
+  initial_default_time: 5
+  default_time_momentum: 0.2
+
+seed: 0
