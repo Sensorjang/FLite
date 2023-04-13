@@ -1,5 +1,5 @@
 # 暴露到外部的函数和类
-from FLite.data_distribution.distributed import (
+from FLite.distribution.distributed import (
     dist_init,
     get_device,
     grouping,
@@ -12,7 +12,7 @@ from FLite.data_distribution.distributed import (
     CPU,
 )
 
-from FLite.data_distribution.slurm import setup, get_ip
+from FLite.distribution.slurm import setup, get_ip
 
 __all__ = [
     "dist_init",

@@ -1,6 +1,6 @@
 import FLite
 
-from FLite.data_distribution import slurm
+from FLite.distribution import slurm
 # Slurm 集群环境运行
 
 rank, local_rank, world_size, host_addr = slurm.setup()

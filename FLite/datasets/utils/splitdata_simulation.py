@@ -309,18 +309,18 @@ def data_simulation(
             Note: num_of_clients should be divisible by len(weights)
         weights (list[float], optional): The targeted distribution of data quantities.
             The values should sum up to 1. e.g., [0.1, 0.2, 0.7].
-            When `weights=None`, the data quantity of clients only depends on data_distribution.
+            When `weights=None`, the data quantity of clients only depends on distribution.
         alpha (float, optional): The parameter for Dirichlet process simulation.
-            It is only applicable when data_distribution is `dir`.
+            It is only applicable when distribution is `dir`.
         min_size (int, optional): The minimum number of data size of a client.
-            It is only applicable when data_distribution is `dir`.
+            It is only applicable when distribution is `dir`.
         class_per_client (int): The number of classes in each client.
-            It is only applicable when data_distribution is `class`.
+            It is only applicable when distribution is `class`.
         stack_x (bool, optional): A flag to indicate whether using np.vstack or append to construct dataset.
-            It is only applicable when data_distribution is `class`.
+            It is only applicable when distribution is `class`.
 
     Raise:
-        ValueError: When the simulation method `data_distribution` is not supported.
+        ValueError: When the simulation method `distribution` is not supported.
 
     Returns:
         list[str]: A list of client ids.

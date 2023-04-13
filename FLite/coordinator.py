@@ -13,7 +13,7 @@ from FLite.utils.obvious_notice_logger import noticelogger
 from FLite.client.BaseClient import BaseClient
 from FLite.datasets import TEST_IN_SERVER
 from FLite.datasets.utils.data_loader import construct_datasets
-from FLite.data_distribution import dist_init, get_device
+from FLite.distribution import dist_init, get_device
 from FLite.models.BaseModel import initModel as load_model
 from FLite.server.BaseServer import BaseServer
 from FLite.heterogeneous_simulation.system_hetero import resource_hetero_simulation

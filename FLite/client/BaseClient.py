@@ -7,7 +7,7 @@ import torch
 
 from FLite.client.service import ClientService
 from FLite.communication.grpc import grpc_wrapper
-from FLite.data_distribution.distributed import CPU
+from FLite.distribution.distributed import CPU
 from FLite.protobuf import common_pb2 as common_pb
 from FLite.protobuf import server_service_pb2 as server_pb
 from FLite.protocol import codec

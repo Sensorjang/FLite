@@ -13,7 +13,7 @@ from omegaconf import OmegaConf
 
 from FLite.communication.grpc import grpc_wrapper
 from FLite.datasets import TEST_IN_SERVER
-from FLite.data_distribution import (
+from FLite.distribution import (
     grouping,
     reduce_models,
     reduce_models_only_params,
@@ -22,7 +22,7 @@ from FLite.data_distribution import (
     reduce_weighted_values,
     gather_value,
 )
-from FLite.data_distribution.distributed import CPU, GREEDY_GROUPING
+from FLite.distribution.distributed import CPU, GREEDY_GROUPING
 from FLite.protobuf import client_service_pb2 as client_pb
 from FLite.protobuf import common_pb2 as common_pb
 from FLite.protocol import codec
