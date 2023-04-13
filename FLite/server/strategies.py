@@ -25,6 +25,43 @@ def federated_averaging(models, weights):
     model.load_state_dict(model_params)
     return model
 
+def federated_prox(models, weights, mu=0.0, prox_fn=None, prox_args=None):
+    """Compute weighted average of model parameters and persistent buffers
+    with FedProx regularization.
+
+    Args:
+        models (list[nn.Module]): List of models to average.
+        weights (list[float]): List of weights, corresponding to each model.
+            Weights are dataset size of clients by default.
+        mu (float, optional): Proximal term coefficient.
+            Defaults to 0.0, which makes it equivalent to FedAvg.
+        prox_fn (callable, optional): Proximal function applied on model parameters.
+            Defaults to None.
+        prox_args (tuple, optional): Arguments passed to the proximal function.
+            Defaults to None.
+
+    Returns
+        nn.Module: Weighted averaged model with FedProx regularization.
+    """
+    if models == [] or weights == []:
+        return None
+
+    model, total_weights = weighted_sum(models, weights)
+    model_params = model.state_dict()
+    with torch.no_grad():
+        for name, params in model_params.items():
+            if mu != 0.0 and prox_fn is not None:
+                prox_params = prox_fn(params, *prox_args)
+                model_params[name] = torch.div(torch.add(torch.mul(params, total_weights),
+                                                         torch.mul(prox_params, mu)),
+                                               (total_weights + mu))
+            else:
+                model_params[name] = torch.div(params, total_weights)
+    model.load_state_dict(model_params)
+    return model
+
+
+
 
 def federated_averaging_only_params(models, weights):
     """Compute weighted average of model parameters. Use model parameters only.

@@ -42,8 +42,9 @@ ACCURACY = "accuracy"
 LOSS = "loss"
 CLIENT_METRICS = "client_metrics"
 
-FEDERATED_AVERAGE = "FedAvg"
+FED_AVERAGE = "FedAvg"
 EQUAL_AVERAGE = "equal"
+FED_PROX = "FedProx"
 
 AGGREGATION_CONTENT_ALL = "all"
 AGGREGATION_CONTENT_PARAMS = "parameters"
@@ -166,7 +167,7 @@ class BaseServer(object):
             self._round_time = time.time()
 
             self._current_round += 1
-            self.print_("\033[1;36m\n-------- round {} --------\033[0m".format(self._current_round))
+            self.print_("\033[1;36m\n------------- round {} -------------\033[0m".format(self._current_round))
 
             # Train
             self.pre_train()
@@ -637,14 +638,21 @@ class BaseServer(object):
         Returns
             nn.Module: Aggregated model.
         """
+        global fn_aggregate
+        from FLite.utils.obvious_notice_logger import noticelogger
+        noticelogger.get_instance().green("Aggregating model (aggregation strategy: {}) ...".format(self.conf.server.aggregation_strategy))
         if self.conf.server.aggregation_strategy == EQUAL_AVERAGE:
             weights = [1 for _ in range(len(models))]
+            fn_aggregate = strategies.federated_averaging
+        elif self.conf.server.aggregation_strategy == FED_AVERAGE:
+            fn_aggregate = strategies.federated_averaging
+        elif self.conf.server.aggregation_strategy == FED_PROX:
+            fn_aggregate = strategies.federated_prox
 
-        fn_average = strategies.federated_averaging
         fn_sum = strategies.weighted_sum
         fn_reduce = reduce_models
         if self.conf.server.aggregation_content == AGGREGATION_CONTENT_PARAMS:
-            fn_average = strategies.federated_averaging_only_params
+            fn_aggregate = strategies.federated_averaging_only_params
             fn_sum = strategies.weighted_sum_only_params
             fn_reduce = reduce_models_only_params
 
@@ -653,7 +661,12 @@ class BaseServer(object):
             model, sample_sum = fn_sum(models, weights)
             fn_reduce(model, torch.tensor(sample_sum).to(self.conf.device))
         else:
-            model = fn_average(models, weights)
+            if self.conf.server.aggregation_strategy == FED_PROX:
+                model = fn_aggregate(models, weights, self.conf.server.prox_mu)
+            else:
+                model = fn_aggregate(models, weights)
+
+        noticelogger.get_instance().green("OK!")
         return model
 
     def _reset(self):

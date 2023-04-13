@@ -62,14 +62,15 @@ server:
   batch_size: 32  # test_in_server的批量大小。
   test_all: False  # 是测试所有客户端还是只测试选定的客户端。
   random_selection: True  # 是否随机选择要训练的客户端。
-  # 聚合客户端上传模型的策略，选项：FedAvg，equal。
+  # 聚合客户端上传模型的策略，选项：FedAvg,equal,FedProx。
     # FedAvg使用加权平均值聚合模型，其中权重是客户端的数据占比。
     # equal通过简单平均聚合模型。
-  aggregation_stragtegy: "FedAvg"
+  aggregation_strategy: "FedAvg"
   # 聚合的内容，选项： all, parameters.
     # all 使用statedict聚合模型，包括模型参数和持久缓冲区（如BatchNorm统计数据）
     # parameters 只聚集模型参数。
   aggregation_content: "all"
+  prox_mu: 0.01  # 用于FedProx算法的mu参数,调整惩罚项的强度，默认0.01。
 
 client:
   track: False  # 是否使用追踪服务追踪客户端指标。
