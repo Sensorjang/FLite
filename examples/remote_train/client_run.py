@@ -10,7 +10,7 @@ conf = {
     "server_addr": "localhost:22999",
     "index": 0,
     "client": {
-        "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "CAST"},
+        "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "Blowfish"},
     }
 }
 FLite.init(conf, init_all=False)

@@ -8,7 +8,7 @@ conf = {
     "is_remote": True,
     "local_port": 22999,
     "server": {
-        "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "CAST"},
+        "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "Blowfish"},
     }
 }
 # Initialize only the configuration.
