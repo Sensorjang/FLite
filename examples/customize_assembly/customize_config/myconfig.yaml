@@ -32,6 +32,10 @@ server:
   random_selection: True
   aggregation_stragtegy: "FedAvg"
   aggregation_content: "all"
+  prox_mu: 0.01
+  encryption:
+    type: "DES"
+    key: ""
 
 client:
   track: False
@@ -45,6 +49,9 @@ client:
     weight_decay: 0
   seed: 0
   local_test: False
+  encryption:
+    type: "DES"
+    key: ""
 
 gpu: 0
 distributed:

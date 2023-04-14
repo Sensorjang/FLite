@@ -71,6 +71,14 @@ server:
     # parameters 只聚集模型参数。
   aggregation_content: "all"
   prox_mu: 0.01  # 用于FedProx算法的mu参数,调整惩罚项的强度，默认0.01。
+  encryption:
+    type: "DES"  # 加密类型，支持：Blowfish, DES, Salsa20
+    # 用于解密模型的密钥，如果为空，则不解密。
+      # DES:8位密钥
+      # Blowfish: 4-56位密钥
+      # Salsa20: 16、32或64位密钥
+    key: ""
+
 
 client:
   track: False  # 是否使用追踪服务追踪客户端指标。
@@ -85,6 +93,13 @@ client:
     weight_decay: 0 # 权重衰减。
   seed: 0 # 随机种子。
   local_test: False  # 是否在将训练好的模型上传到服务器之前在客户端中测试它们。
+  encryption:
+    type: "DES"  # 加密类型，支持：Blowfish, DES
+    # 用于解密模型的密钥，如果为空，则不解密。
+      # DES:8位密钥
+      # Blowfish: 4-56位密钥
+    key: ""
+
 
 gpu: 0  # 训练中使用的gpu总数。0表示使用CPU。
 distributed:  # 分布式训练配置。仅当gpu>1时才适用。
