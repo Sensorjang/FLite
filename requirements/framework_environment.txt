@@ -7,3 +7,4 @@ numpy
 omegaconf==2.0.0
 requests==2.24.0
 tqdm
+pycryptodome

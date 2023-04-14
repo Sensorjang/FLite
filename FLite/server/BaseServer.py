@@ -104,6 +104,8 @@ class BaseServer(object):
         self, conf, test_data=None, val_data=None, is_remote=False, local_port=22999
     ):
         self.conf = conf
+        self.encryption_key = conf.server.encryption.key
+        self.encryption_type = conf.server.encryption.type
         self.test_data = test_data
         self.val_data = val_data
         self.is_remote = is_remote

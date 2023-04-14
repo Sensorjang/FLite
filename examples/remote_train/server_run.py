@@ -4,7 +4,13 @@ import FLite
 """
 修改服务端信息
 """
-conf = {"is_remote": True, "local_port": 22999}
+conf = {
+    "is_remote": True,
+    "local_port": 22999,
+    "server": {
+        "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "CAST"},
+    }
+}
 # Initialize only the configuration.
 FLite.init(conf, init_all=False)
 # Start remote server service.

@@ -1,5 +1,7 @@
 import logging
 import threading
+from FLite.encryptor import *
+import importlib
 
 from FLite.protobuf import (
     server_service_pb2_grpc as server_grpc,
@@ -8,6 +10,7 @@ from FLite.protobuf import (
 )
 from FLite.protocol import codec
 from FLite.tracking import metric
+from FLite.utils.obvious_notice_logger import noticelogger
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +85,20 @@ class ServerService(server_grpc.ServerServiceServicer):
 
     def _handle_upload(self, request, context):
         # if not self._base.upload_event.is_set():
-        data = codec.unmarshal(request.content.data)
+        data = None
+
+        try:
+            if self._base.encryption_key != "":
+                encryption_type = self._base.encryption_type
+                encryptor_path = "FLite.encryptor.{}".format(encryption_type)
+                encryptor_lib = importlib.import_module(encryptor_path)
+                encryptor = getattr(encryptor_lib, "Encryptor")(self._base.encryption_key)
+                data = encryptor.decrypt(request.content.data)
+                noticelogger.get_instance().green("Model decryption ({}) OK!".format(self._base.encryption_type))
+        except Exception as e:
+            logger.error("\033[1;31mModel decryption ({}) failed maybe! \033[0m".format(self._base.encryption_type,e))
+
+        data = codec.unmarshal(data)
         data_size = request.content.data_size
         client_metric = metric.ClientMetric.from_proto(request.content.metric)
 

@@ -189,13 +189,11 @@ class Coordinator(object):
         """
         if not self.registered_client:
             self._client_class = BaseClient
-
         # Get a random client if not specified
         if self.conf.index:
             user = self.train_data.users[self.conf.index]
         else:
             user = random.choice(self.train_data.users)
-
         return self._client_class(
             user,
             self.conf.client,

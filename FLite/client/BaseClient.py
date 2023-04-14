@@ -4,6 +4,9 @@ import logging
 import time
 
 import torch
+import importlib
+
+from omegaconf import OmegaConf
 
 from FLite.client.service import ClientService
 from FLite.communication.grpc import grpc_wrapper
@@ -14,6 +17,7 @@ from FLite.protocol import codec
 from FLite.tracking import metric
 from FLite.tracking.client import init_tracking
 from FLite.tracking.evaluation import model_size
+from FLite.utils.obvious_notice_logger import noticelogger
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +98,8 @@ class BaseClient(object):
     ):
         self.cid = cid
         self.conf = conf
+        self.encryption_key = conf.encryption.key
+        self.encryption_type = conf.encryption.type
         self.train_data = train_data
         self.train_loader = None
         self.test_data = test_data
@@ -124,6 +130,7 @@ class BaseClient(object):
         self._tracker = None
         self._is_train = True
 
+
         if conf.track:
             self._tracker = init_tracking(init_store=False)
 
@@ -136,6 +143,7 @@ class BaseClient(object):
         Returns:
             :obj:`UploadRequest`: Training contents. Unify the interface for both local and remote operations.
         """
+
         self.conf = conf
         if conf.track:
             self._tracker.set_client_context(conf.task_id, conf.round_id, self.cid)
@@ -398,6 +406,18 @@ class BaseClient(object):
             if self._tracker
             else common_pb.ClientMetric()
         )
+
+        try:
+            if self.encryption_key != "":
+                encryption_type = self.encryption_type
+                encryptor_path = "FLite.encryptor.{}".format(encryption_type)
+                encryptor_lib = importlib.import_module(encryptor_path)
+                encryptor = getattr(encryptor_lib, "Encryptor")(self.encryption_key)
+                data = encryptor.encrypt(data)
+                noticelogger.get_instance().green("Model encryption ({}) OK!".format(self.encryption_type))
+        except Exception as e:
+            logger.error("\033[1;31mModel encryption ({}) failed: {} \033[0m".format(self.encryption_type,e))
+
         return server_pb.UploadRequest(
             task_id=self.conf.task_id,
             round_id=self.conf.round_id,
