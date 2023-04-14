@@ -9,6 +9,7 @@
    (_") ("_)(__) (__)(_")("_)(_")("_)    (__)       |__/      |________/|__/   \___/   \_______/
                                                                                       Version 1.0.0
 </pre>
+
 <div align="center">
 <h1 align="center">FLite: A Lightweight Federated Learning Framework for Real-World Deployment</h1>
 
@@ -20,9 +21,19 @@
 
 </div>
 
-
-##### Graduation Project: Design and Implementation of a Topology Based Distributed Training Federated Learning Experimental Framework. <br/>
+## Introduction
+**Graduation Project: Design and Implementation of a Topology Based Distributed Training Federated Learning Experimental Framework. <br/>**
+**毕业设计：一种基于拓扑结构的分布式训练联邦学习实验框架的设计与实现<br/>**
 [Software Engineering, School of Computer Science and Technology, WUST, P. Qi(Sensorjang@wust.edu.cn)]<br/>
-毕业设计：一种基于拓扑结构的分布式训练联邦学习实验框架的设计与实现<br/>
-软件工程，计算机科学与技术学院，武汉科技大学 ，P. Qi<br/>
-P. Qi （Sensorjang@wust.edu.cn）设计<br/>
+
+## Installation
+coming soon...
+
+## Features Overview
+coming soon...
+
+## Quick Start
+coming soon...
+
+## License
+This project is released under the [MIT License](LICENSE).
