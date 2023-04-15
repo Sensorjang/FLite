@@ -414,9 +414,9 @@ class BaseClient(object):
                 encryptor_lib = importlib.import_module(encryptor_path)
                 encryptor = getattr(encryptor_lib, "Encryptor")(self.encryption_key)
                 data = encryptor.encrypt(data)
-                noticelogger.get_instance().green("Model encryption ({}) OK!".format(self.encryption_type))
+                noticelogger.get_instance().blue("During model uploading: Encryption ({}) OK!".format(self.encryption_type))
         except Exception as e:
-            logger.error("\033[1;31mModel encryption ({}) failed: {} \033[0m".format(self.encryption_type,e))
+            logger.error("\033[1;31mDuring model uploading: Encryption ({}) failed: {} \033[0m".format(self.encryption_type,e))
 
         return server_pb.UploadRequest(
             task_id=self.conf.task_id,

@@ -1,6 +1,7 @@
 import argparse
 import concurrent.futures
 import copy
+import importlib
 import logging
 import os
 import threading
@@ -32,6 +33,7 @@ from FLite.server.service import ServerService
 from FLite.tracking import metric
 from FLite.tracking.client import init_tracking
 from FLite.utils.float import rounding
+from FLite.utils.obvious_notice_logger import noticelogger
 
 logger = logging.getLogger(__name__)
 
@@ -432,11 +434,24 @@ class BaseServer(object):
         """
         start_time = time.time()
         should_track = self._tracker is not None and self.conf.client.track
+
+        data = codec.marshal(self._compressed_model)
+        try:
+            if self.encryption_key != "":
+                encryption_type = self.encryption_type
+                encryptor_path = "FLite.encryptor.{}".format(encryption_type)
+                encryptor_lib = importlib.import_module(encryptor_path)
+                encryptor = getattr(encryptor_lib, "Encryptor")(self.encryption_key)
+                data = encryptor.encrypt(data)
+                noticelogger.get_instance().blue("During model publishing: Encryption ({}) OK!".format(self.encryption_type))
+        except Exception as e:
+            logger.error("\033[1;31mDuring model publishing: Encryption ({}) failed: {} \033[0m".format(self.encryption_type,e))
+
         with concurrent.futures.ThreadPoolExecutor() as executor:
             for client in self.grouped_clients:
                 request = client_pb.OperateRequest(
                     type=client_pb.OP_TYPE_TRAIN,
-                    model=codec.marshal(self._compressed_model),
+                    model=data,
                     data_index=client.index,
                     config=client_pb.OperateConfig(
                         batch_size=self.conf.client.batch_size,
@@ -507,11 +522,24 @@ class BaseServer(object):
         start_time = time.time()
         should_track = self._tracker is not None and self.conf.client.track
         test_clients = self.get_test_clients()
+
+        data = codec.marshal(self._compressed_model)
+        try:
+            if self.encryption_key != "":
+                encryption_type = self.encryption_type
+                encryptor_path = "FLite.encryptor.{}".format(encryption_type)
+                encryptor_lib = importlib.import_module(encryptor_path)
+                encryptor = getattr(encryptor_lib, "Encryptor")(self.encryption_key)
+                data = encryptor.encrypt(data)
+                noticelogger.get_instance().blue("During model publishing: Encryption ({}) OK!".format(self.encryption_type))
+        except Exception as e:
+            logger.error("\033[1;31mDuring model publishing: Encryption ({}) failed: {} \033[0m".format(self.encryption_type,e))
+
         with concurrent.futures.ThreadPoolExecutor() as executor:
             for client in test_clients:
                 request = client_pb.OperateRequest(
                     type=client_pb.OP_TYPE_TEST,
-                    model=codec.marshal(self._compressed_model),
+                    model=data,
                     data_index=client.index,
                     config=client_pb.OperateConfig(
                         batch_size=self.conf.client.batch_size,

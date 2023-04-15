@@ -85,7 +85,7 @@ class ServerService(server_grpc.ServerServiceServicer):
 
     def _handle_upload(self, request, context):
         # if not self._base.upload_event.is_set():
-        data = None
+        data = request.content.data
 
         try:
             if self._base.encryption_key != "":
@@ -94,9 +94,9 @@ class ServerService(server_grpc.ServerServiceServicer):
                 encryptor_lib = importlib.import_module(encryptor_path)
                 encryptor = getattr(encryptor_lib, "Encryptor")(self._base.encryption_key)
                 data = encryptor.decrypt(request.content.data)
-                noticelogger.get_instance().green("Model decryption ({}) OK!".format(self._base.encryption_type))
+                noticelogger.get_instance().blue("During model uploading: Decryption ({}) OK!".format(self._base.encryption_type))
         except Exception as e:
-            logger.error("\033[1;31mModel decryption ({}) failed maybe! \033[0m".format(self._base.encryption_type,e))
+            logger.error("\033[1;31mDuring model uploading: Decryption ({}) failed maybe! \033[0m".format(self._base.encryption_type,e))
 
         data = codec.unmarshal(data)
         data_size = request.content.data_size
