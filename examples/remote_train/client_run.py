@@ -1,6 +1,6 @@
 import FLite
 
-# Configurations for the remote client.
+# 远程客户端配置
 """
 修改客户端信息
 """

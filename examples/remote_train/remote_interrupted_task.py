@@ -9,7 +9,7 @@ server_addr = "localhost:22999"
 stub = grpc_wrapper.init_stub(grpc_wrapper.TYPE_SERVER, server_addr)
 
 
-# Send request to stop training.
+# 发送停止训练请求
 print("waiting ...")
 response = stub.Stop(server_pb.StopRequest())
 result = "Success" if response.status.code == common_pb.SC_OK else response

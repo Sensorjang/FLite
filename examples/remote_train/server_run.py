@@ -1,6 +1,6 @@
 import FLite
 
-# Configurations for the remote server.
+# 远程服务器的配置
 """
 修改服务端信息
 """
@@ -11,8 +11,8 @@ conf = {
         "encryption": {"key": "ABCDEGFHABCDEGFH", "type": "Blowfish"},
     }
 }
-# Initialize only the configuration.
+# 初始化配置
 FLite.init(conf, init_all=False)
-# Start remote server service.
-# The remote server waits to be connected with the remote client.
+# 启动远程服务器服务
+# 远程服务器等待与远程客户端建立连接
 FLite.start_server()
