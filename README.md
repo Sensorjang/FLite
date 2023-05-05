@@ -42,18 +42,20 @@ Here is the complete command to configure the FLite environment using conda<br/>
 conda create -n flite python=3.7 -y
 conda activate flite
 
-# CPU only
+# 1、CPU only
 # 在仅通过CPU计算的设备上运行
 conda install pytorch==1.6.0 torchvision==0.7.0 -c pytorch -y
-# With GPU
+# 2、With GPU
 # 在支持GPU的设备上运行
 conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch -y
 
 # install FLite
-# 安装FLite
+# 1、本地编译安装FLite
 git clone https://github.com/Sensorjang/FLite.git
 cd FLite
 pip install -v -e .
+# 2、pip安装 (from https://pypi.org/project/FLite/1.0.0/)
+pip install FLite==1.0.0
 ```
 
 ## Features Overview
