@@ -96,7 +96,7 @@ if __name__ == '__main__':
         url='https://github.com/Sensorjang/FLite', # 项目主页
         download_url='https://github.com/Sensorjang/FLite.git', # 下载地址
         packages=find_packages(), # 自动查找包
-        data_files=[('requirements', ['requirements/framework_environment.txt']), ('FLite', ['FLite/config.yaml'])], # 静态文件
+        data_files=[('requirements', ['requirements/framework_environment.txt']), ('banner',['FLite/utils/banner.txt']), ('FLite', ['FLite/config.yaml'])], # 静态文件
         include_package_data=True,
         classifiers=[
             'Development Status :: 3 - Alpha',

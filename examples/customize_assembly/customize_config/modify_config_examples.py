@@ -23,7 +23,7 @@ def method_1():
 
 
 """
-2 外部yaml文件入配置
+2 外部yaml文件导入配置
 """
 def method_2():
     config_file = "myconfig.yaml"

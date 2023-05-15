@@ -54,7 +54,7 @@ conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch -y
 git clone https://github.com/Sensorjang/FLite.git
 cd FLite
 pip install -v -e .
-# 2、pip安装 (from https://pypi.org/project/FLite/1.0.0/)
+# 2、pip安装 (from https://pypi.org/project/FLite/1.0.0)
 pip install FLite==1.0.0
 ```
 
@@ -75,7 +75,7 @@ pip install FLite==1.0.0
 ### 联邦聚合算法支持
 - FedAvg
 - FedProx
-- equal
+- Equal Average
 
 
 #### 聚合策略：all、parameters
@@ -105,12 +105,17 @@ pip install FLite==1.0.0
 本地数据库配置,支持sqlite3和mysql
 
 ### 异构联邦客户端模拟
-- iso: 选定客户端具有等长睡眠时间分布
-- dir: 使用对称狄利克雷过程对睡眠时间异质性进行采样，以模拟直接异质性
-- real: 模拟真实的异构性，即客户端的计算能力不同。使用主流智能手机的真实速度比来模拟睡眠时间的异构性
+- Simulate ISO: 选定客户端具有等长睡眠时间分布
+- Simulate DIR: 使用对称狄利克雷过程对睡眠时间异质性进行采样，以模拟直接异质性
+- Simulate REAL: 模拟真实的异构性，即客户端的计算能力不同。使用主流智能手机的真实速度比来模拟睡眠时间的异构性
 
 #### 处理系统异构的分组策略
 支持：随机、贪婪、最慢(random, greedy, slowest)
+
+### FLite特色
+设备异构模拟服务
+联邦建模追踪服务
+数据集分割处理模块
 
 ## Quick Start
 Flite提供了许多示例，您可以在[examples](/examples)目录下找到它们。<br/>
