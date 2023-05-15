@@ -1,4 +1,4 @@
-FLite V1.0.0  design by Sensorjang|P. Qi
+FLite V1.0.1  design by Sensorjang|P. Qi
 https://github.com/Sensorjang/FLite
 
   /$$$$$$$$ /$$       /$$   /$$
@@ -9,5 +9,5 @@ https://github.com/Sensorjang/FLite
  | $$      | $$      | $$  | $$ /$$| $$_____/
  | $$      | $$$$$$$$| $$  |  $$$$/|  $$$$$$$
  |__/      |________/|__/   \___/   \_______/
-                                Version 1.0.0
+                                Version 1.0.1
 

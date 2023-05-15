@@ -7,7 +7,7 @@
     |_| |_|  |_____|  |_____| |_____|\_)-\___/      | $$      | $$      | $$  | $$ /$$| $$_____/
     //   \\  <<   >>  //  \\  //  \\      \\        | $$      | $$$$$$$$| $$  |  $$$$/|  $$$$$$$
    (_") ("_)(__) (__)(_")("_)(_")("_)    (__)       |__/      |________/|__/   \___/   \_______/
-                                                                                      Version 1.0.0
+                                                                                      Version 1.0.1
 </pre>
 
 <div align="center">
@@ -54,8 +54,8 @@ conda install pytorch==1.6.0 torchvision==0.7.0 cudatoolkit=10.1 -c pytorch -y
 git clone https://github.com/Sensorjang/FLite.git
 cd FLite
 pip install -v -e .
-# 2、pip安装 (from https://pypi.org/project/FLite/1.0.0)
-pip install FLite==1.0.0
+# 2、pip安装 (from https://pypi.org/project/FLite/1.0.1)
+pip install FLite==1.0.1
 ```
 
 ## Features Overview
