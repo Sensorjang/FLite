@@ -22,8 +22,8 @@
 </div>
 
 ## Introduction
-**Graduation Project: Design and Implementation of a Topology Based Distributed Training Federated Learning Experimental Framework. <br/>**
-**毕业设计：一种基于拓扑结构的分布式训练联邦学习实验框架的设计与实现<br/>**
+**Paper：FLite: Design and Development of a Flexible and Scalable Lightweight Federated Learning Framework. <br/>**
+**文献：FLite：一种灵活可扩展的轻量级联邦学习框架设计与研发<br/>**
 [Software Engineering, School of Computer Science and Technology, WUST, P. Qi(Sensorjang@wust.edu.cn)]<br/>
 
 ## Prerequisites
